@@ -11,6 +11,9 @@ public class UIPanelManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        InventoryPanel.SetActive(false);
+        EquipmentPanel.SetActive(false);
+        AttributesPanel.SetActive(false);
     }
 
     // Update is called once per frame
