@@ -6,6 +6,7 @@ public class UIPanelManager : MonoBehaviour
 {
     public GameObject InventoryPanel;
     public GameObject EquipmentPanel;
+    public GameObject AttributesPanel;
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +24,11 @@ public class UIPanelManager : MonoBehaviour
         if (Input.GetButtonDown("Equipment"))
         {
             TogglePanel(EquipmentPanel);
+        }
+
+        if (Input.GetButtonDown("Attributes"))
+        {
+            TogglePanel(AttributesPanel);
         }
     }
 
