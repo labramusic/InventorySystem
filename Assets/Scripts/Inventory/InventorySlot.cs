@@ -6,15 +6,30 @@ using UnityEngine.UI;
 public class InventorySlot : MonoBehaviour
 {
     public Image Icon;
+    public Text StackCountText;
 
     private PickupableItem _item;
 
-    public void AddItem(PickupableItem newItem)
+    public void AddItem(PickupableItem newItem, int stackCount)
     {
         _item = newItem;
 
         Icon.sprite = newItem.Icon;
         Icon.enabled = true;
+
+        if (newItem is NonEquippableItem nonEquippable 
+            && nonEquippable.StackLimit != 1)
+        {
+            StackCountText.text = stackCount.ToString();
+
+            if (stackCount == nonEquippable.StackLimit)
+            {
+                StackCountText.color = Color.green;
+            }
+            // TODO else revert to black (default)
+
+            StackCountText.enabled = true;
+        }
     }
 
     // Subtract Item
@@ -31,7 +46,7 @@ public class InventorySlot : MonoBehaviour
     public void OnRemove()
     {
         // TODO cache
-        Inventory.Instance.Remove(_item);
+        //Inventory.Instance.Remove(_item);
     }
 
     // TODO on click
