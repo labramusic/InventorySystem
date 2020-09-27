@@ -3348,6 +3348,7 @@ GameObject:
   - component: {fileID: 963231575}
   - component: {fileID: 963231574}
   - component: {fileID: 963231579}
+  - component: {fileID: 963231580}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -3498,6 +3499,20 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.3, y: 0.08093709}
   m_EdgeRadius: 0
+--- !u!114 &963231580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963231573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2fc9f4149936f64b90b451c23e9c608, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Items: []
+  Capacity: 32
 --- !u!1001 &984348149
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4134,6 +4149,7 @@ GameObject:
   - component: {fileID: 1087725303}
   - component: {fileID: 1087725302}
   - component: {fileID: 1087725306}
+  - component: {fileID: 1087725307}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -4238,6 +4254,19 @@ MonoBehaviour:
   InventoryPanel: {fileID: 1180343578}
   EquipmentPanel: {fileID: 1657599214}
   AttributesPanel: {fileID: 1543959762}
+--- !u!114 &1087725307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1087725301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b507c988c6d4652429e78d797ebefe65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InventoryPanel: {fileID: 1180343579}
 --- !u!1001 &1094649925
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10933,6 +10962,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a753bb6213fd861479dd76f7c5a3f15a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Item: {fileID: 11400000, guid: 0f8d517c8b43da54cae2941528d735a6, type: 2}
   PickupRadius: 3
 --- !u!212 &1560459073
 SpriteRenderer:

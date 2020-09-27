@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
+using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour
 {
@@ -26,16 +27,18 @@ public class PlayerController : MonoBehaviour
     {
         _moveDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
 
+        if (EventSystem.current.IsPointerOverGameObject()) return;
         if (Input.GetMouseButtonDown(1))
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
 
             RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
-            var item = hit.collider.GetComponent<Item>();
+            if (hit.collider == null) return;
+            var item = hit.collider.GetComponent<PickUpItem>();
             if (item != null && Vector2.Distance(hit.collider.gameObject.transform.position, gameObject.transform.position) <= item.PickupRadius)
             {
-                item.Interact();
+                item.PickUp();
             }
         }
     }
