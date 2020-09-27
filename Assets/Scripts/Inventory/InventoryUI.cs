@@ -13,13 +13,13 @@ public class InventoryUI : MonoBehaviour
     private InventorySlot[] _inventorySlots;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         _inventory = Inventory.Instance;
         _inventory.OnInventoryUpdateCallback += UpdateUI;
 
         // TODO on size change update with callback
-        _inventorySlots = GetComponentsInChildren<InventorySlot>();
+        _inventorySlots = InventoryPanel.GetComponentsInChildren<InventorySlot>();
     }
 
     private void OnDestroy()

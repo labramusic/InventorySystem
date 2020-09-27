@@ -22,7 +22,7 @@ public class Inventory : MonoBehaviour
 
     #endregion
 
-    public List<InventoryItem> Items = new List<InventoryItem>();
+    public List<PickupableItem> Items = new List<PickupableItem>();
 
     public int Capacity = 32;
 
@@ -31,7 +31,7 @@ public class Inventory : MonoBehaviour
     public OnInventoryUpdate OnInventoryUpdateCallback;
     //
 
-    public bool Add(InventoryItem item)
+    public bool Add(PickupableItem item)
     {
         if (Items.Count >= Capacity)
         {
@@ -45,7 +45,7 @@ public class Inventory : MonoBehaviour
         return true;
     }
 
-    public void Remove(InventoryItem item)
+    public void Remove(PickupableItem item)
     {
         Items.Remove(item);
 

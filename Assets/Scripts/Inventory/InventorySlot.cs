@@ -7,9 +7,9 @@ public class InventorySlot : MonoBehaviour
 {
     public Image Icon;
 
-    private InventoryItem _item;
+    private PickupableItem _item;
 
-    public void AddItem(InventoryItem newItem)
+    public void AddItem(PickupableItem newItem)
     {
         _item = newItem;
 

@@ -35,10 +35,10 @@ public class PlayerController : MonoBehaviour
 
             RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
             if (hit.collider == null) return;
-            var item = hit.collider.GetComponent<PickUpItem>();
-            if (item != null && Vector2.Distance(hit.collider.gameObject.transform.position, gameObject.transform.position) <= item.PickupRadius)
+            var item = hit.collider.GetComponent<InteractableItem>();
+            if (item != null && Vector2.Distance(hit.collider.gameObject.transform.position, gameObject.transform.position) <= item.InteractRadius)
             {
-                item.PickUp();
+                item.Interact();
             }
         }
     }
