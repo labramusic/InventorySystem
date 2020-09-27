@@ -7,6 +7,8 @@ public class EquippableItem : PickupableItem
 {
     // public SlotType Slot;
 
+    // public List<AttributeNameType, int> Modifiers;
+
     public override void Use()
     {
         throw new System.NotImplementedException();
