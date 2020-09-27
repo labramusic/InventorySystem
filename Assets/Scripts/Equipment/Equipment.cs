@@ -61,10 +61,17 @@ public class Equipment : MonoBehaviour
         EquippableItem oldItem;
         if ((oldItem = _equippedItems[slotIndex]) != null)
         {
-            _inventory.Add(oldItem);
-            _equippedItems[slotIndex] = null;
-
-            OnEquipmentChangedCallback?.Invoke(oldItem, null);
+            if (_inventory.Add(oldItem))
+            {
+                _equippedItems[slotIndex] = null;
+                OnEquipmentChangedCallback?.Invoke(oldItem, null);
+            }
         }
+    }
+
+    public bool EquippedInSlot(EquipSlotType equipSlot)
+    {
+        int slotIndex = (int) equipSlot;
+        return _equippedItems[slotIndex] != null;
     }
 }

@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class EquipSlot : MonoBehaviour
+public class EquipSlot : MonoBehaviour, IPointerClickHandler
 {
     public Image Icon;
-    // EquipSlotType
 
     private EquippableItem _item;
 
@@ -24,5 +24,14 @@ public class EquipSlot : MonoBehaviour
 
         Icon.sprite = null;
         Icon.enabled = false;
+    }
+
+    public void OnPointerClick(PointerEventData pointerEventData)
+    {
+        if (pointerEventData.button == PointerEventData.InputButton.Right && _item != null)
+        {
+            Debug.Log($"Unequipped {_item.ItemName}.");
+            Equipment.Instance.Unequip(_item.EquipSlot);
+        }
     }
 }

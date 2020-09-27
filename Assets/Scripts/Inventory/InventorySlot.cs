@@ -1,16 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class InventorySlot : MonoBehaviour
+public class InventorySlot : MonoBehaviour, IPointerClickHandler
 {
     public Image Icon;
     public Text StackCountText;
 
     private PickupableItem _item;
 
-    public void AddItem(PickupableItem newItem, int stackCount)
+    public void SetItem(PickupableItem newItem, int stackCount)
     {
         _item = newItem;
 
@@ -34,8 +35,6 @@ public class InventorySlot : MonoBehaviour
         }
     }
 
-    // Subtract Item
-
     public void ClearSlot()
     {
         _item = null;
@@ -52,10 +51,13 @@ public class InventorySlot : MonoBehaviour
         //Inventory.Instance.Remove(_item);
     }
 
-    // TODO on click
-    public void UseItem()
+    public void OnPointerClick(PointerEventData pointerEventData)
     {
-        if (_item != null)
+        if (pointerEventData.button == PointerEventData.InputButton.Right && _item is EquippableItem)
+        {
+            _item.Use();
+        }
+        else if (pointerEventData.button == PointerEventData.InputButton.Middle && _item is Consumable)
         {
             _item.Use();
         }

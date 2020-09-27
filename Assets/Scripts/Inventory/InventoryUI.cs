@@ -34,7 +34,7 @@ public class InventoryUI : MonoBehaviour
             // display existing
             if (i < _inventory.Items.Count)
             {
-                _inventorySlots[i].AddItem(_inventory.Items[i].Item1, _inventory.Items[i].Item2);
+                _inventorySlots[i].SetItem(_inventory.Items[i].Item1, _inventory.Items[i].Item2);
             }
             else
             {
