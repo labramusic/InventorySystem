@@ -1,16 +1,24 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Equippable", menuName = "Item/Equippable")]
 public class EquippableItem : PickupableItem
 {
-    // public SlotType Slot;
+    public EquipSlotType EquipSlot;
 
-    // public List<AttributeNameType, int> Modifiers;
+    public List<AttributeModifier> Modifiers = new List<AttributeModifier>();
 
     public override void Use()
     {
-        throw new System.NotImplementedException();
+        base.Use();
+        Equipment.Instance.Equip(this);
+        Debug.Log($"Equipped {ItemName}.");
     }
+}
+
+public enum EquipSlotType
+{
+    Head, MainHand, Torso, OffHand, Feet
 }

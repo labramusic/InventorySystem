@@ -27,7 +27,7 @@ public class Attribute
         return modifiedValue;
     }
 
-    public void AddModifier(int modifier)
+    public void ApplyModifier(int modifier)
     {
         if (modifier != 0)
         {

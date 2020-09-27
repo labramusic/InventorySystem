@@ -22,7 +22,6 @@ public class Inventory : MonoBehaviour
 
     #endregion
 
-    //public List<PickupableItem> Items = new List<PickupableItem>();
     public List<(PickupableItem, int)> Items = new List<(PickupableItem, int)>();
 
     public int Capacity = 32;
@@ -40,21 +39,21 @@ public class Inventory : MonoBehaviour
             // equippable - add to new slot
             added = AddToNewSlot(equippable);
         }
-        else if (item is NonEquippableItem nonEquippable)
+        else if (item is Consumable consumable)
         {
-            if (nonEquippable.StackLimit == 1)
+            if (consumable.StackLimit == 1)
             {
                 // nonstackable - add to new slot
-                added = AddToNewSlot(nonEquippable);
+                added = AddToNewSlot(consumable);
             }
-            else if (nonEquippable.StackLimit == 0)
+            else if (consumable.StackLimit == 0)
             {
                 // no stack limit - maxint
-                added = AddToExistingStack(nonEquippable, int.MaxValue);
+                added = AddToExistingStack(consumable, int.MaxValue);
             }
             else
             {
-                added = AddToExistingStack(nonEquippable, nonEquippable.StackLimit);
+                added = AddToExistingStack(consumable, consumable.StackLimit);
             }
         }
 
@@ -68,7 +67,13 @@ public class Inventory : MonoBehaviour
 
     public void Remove(PickupableItem item)
     {
-        //Items.Remove(item);
+        // remove item from smallest stack
+        int itemStackIndex = Items.FindLastIndex(itemStack => item == itemStack.Item1);
+        Items[itemStackIndex] = (Items[itemStackIndex].Item1, Items[itemStackIndex].Item2 - 1);
+        if (Items[itemStackIndex].Item2 == 0)
+        {
+            Items.RemoveAt(itemStackIndex);
+        }
 
         OnInventoryUpdateCallback?.Invoke();
     }
@@ -84,9 +89,9 @@ public class Inventory : MonoBehaviour
         return true;
     }
 
-    private bool AddToExistingStack(NonEquippableItem item, int stackLimit)
+    private bool AddToExistingStack(Consumable item, int stackLimit)
     {
-        int vacantItemStackIndex = Items.FindIndex(itemStack => item.Equals(itemStack.Item1) && itemStack.Item2 < stackLimit);
+        int vacantItemStackIndex = Items.FindIndex(itemStack => item == itemStack.Item1 && itemStack.Item2 < stackLimit);
         // if no vacant existing stacks add to new slot
         if (vacantItemStackIndex == -1)
         {

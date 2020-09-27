@@ -31,21 +31,54 @@ public class PlayerAttributes : MonoBehaviour
     [SerializeField] 
     private List<Attribute> _baseAttributes = new List<Attribute>();
 
-    private readonly Dictionary<AttributeNameType, Attribute> _attributes = new Dictionary<AttributeNameType, Attribute>();
+    private Attribute[] _attributes;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
+        int numAttributes = System.Enum.GetNames(typeof(AttributeNameType)).Length;
+        _attributes = new Attribute[numAttributes];
         foreach (var attribute in _baseAttributes)
         {
-            _attributes[attribute.AttributeName] = attribute;
+            int index = (int)attribute.AttributeName;
+            _attributes[index] = attribute;
         }
         OnAttributesUpdateCallback?.Invoke();
+
+        Equipment.Instance.OnEquipmentChangedCallback += ApplyModifiers;
+    }
+
+    private void OnDestroy()
+    {
+        Equipment.Instance.OnEquipmentChangedCallback -= ApplyModifiers;
     }
 
     public int GetAttributeValue(AttributeNameType attributeName)
     {
-        return _attributes.ContainsKey(attributeName) ?
-            _attributes[attributeName].GetValue() : 0;
+        int index = (int) attributeName;
+        return (_attributes?[index] != null) ? _attributes[index].GetValue() : 0;
+    }
+
+    private void ApplyModifiers(EquippableItem oldItem, EquippableItem newItem)
+    {
+        if (oldItem != null)
+        {
+            foreach (var modifier in oldItem.Modifiers)
+            {
+                int index = (int) modifier.AttributeName;
+                _attributes[index].RemoveModifier(modifier.Value);
+            }
+        }
+
+        if (newItem != null)
+        {
+            foreach (var modifier in newItem.Modifiers)
+            {
+                int index = (int)modifier.AttributeName;
+                _attributes[index].ApplyModifier(modifier.Value);
+            }
+        }
+
+        OnAttributesUpdateCallback?.Invoke();
     }
 }

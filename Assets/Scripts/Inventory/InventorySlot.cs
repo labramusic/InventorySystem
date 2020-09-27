@@ -17,18 +17,20 @@ public class InventorySlot : MonoBehaviour
         Icon.sprite = newItem.Icon;
         Icon.enabled = true;
 
-        if (newItem is NonEquippableItem nonEquippable 
-            && nonEquippable.StackLimit != 1)
+        if (newItem is Consumable consumable 
+            && consumable.StackLimit != 1)
         {
             StackCountText.text = stackCount.ToString();
 
-            if (stackCount == nonEquippable.StackLimit)
-            {
+            if (stackCount == consumable.StackLimit)
                 StackCountText.color = Color.green;
-            }
-            // TODO else revert to black (default)
+            else StackCountText.color = Color.white;
 
             StackCountText.enabled = true;
+        }
+        else
+        {
+            StackCountText.enabled = false;
         }
     }
 
@@ -40,6 +42,7 @@ public class InventorySlot : MonoBehaviour
 
         Icon.sprite = null;
         Icon.enabled = false;
+        StackCountText.enabled = false;
     }
 
     // TODO remove from inventory by dragging

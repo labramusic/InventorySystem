@@ -25,7 +25,7 @@ public class AttributesUI : MonoBehaviour
         _playerAttributes.OnAttributesUpdateCallback -= UpdateUI;
     }
 
-    void UpdateUI()
+    private void UpdateUI()
     {
         StrengthAttrValue.text = _playerAttributes.GetAttributeValue(AttributeNameType.Strength).ToString();
         VitalityAttrValue.text = _playerAttributes.GetAttributeValue(AttributeNameType.Vitality).ToString();

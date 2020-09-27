@@ -27,7 +27,7 @@ public class InventoryUI : MonoBehaviour
         _inventory.OnInventoryUpdateCallback -= UpdateUI;
     }
 
-    void UpdateUI()
+    private void UpdateUI()
     {
         for (int i = 0; i < _inventorySlots.Length; ++i)
         {
