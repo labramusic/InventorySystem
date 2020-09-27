@@ -17,7 +17,7 @@ public class AttributesUI : MonoBehaviour
     {
         _playerAttributes = PlayerAttributes.Instance;
         _playerAttributes.OnAttributesUpdateCallback += UpdateUI;
-        //UpdateUI();
+        UpdateUI();
     }
 
     private void OnDestroy()

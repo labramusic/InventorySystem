@@ -45,6 +45,7 @@ public class PlayerAttributes : MonoBehaviour
 
     public int GetAttributeValue(AttributeNameType attributeName)
     {
-        return _attributes[attributeName].GetValue();
+        return _attributes.ContainsKey(attributeName) ?
+            _attributes[attributeName].GetValue() : 0;
     }
 }
