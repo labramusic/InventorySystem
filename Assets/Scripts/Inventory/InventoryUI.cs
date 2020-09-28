@@ -6,11 +6,14 @@ using UnityEngine;
 public class InventoryUI : MonoBehaviour
 {
     public Transform InventoryPanel;
+    public GameObject InventorySlotPrefab;
 
     private Inventory _inventory;
 
-    // dynamic array
-    private InventorySlot[] _inventorySlots;
+    // TODO dynamic array
+    private InventorySlot[] _inventorySlots = new InventorySlot[Inventory.INITIAL_CAPACITY];
+
+    //private const int INITIAL_SLOTS_NUM = 32;
 
     // Start is called before the first frame update
     private void Start()
@@ -19,7 +22,14 @@ public class InventoryUI : MonoBehaviour
         _inventory.OnInventoryUpdateCallback += UpdateUI;
 
         // TODO on size change update with callback
-        _inventorySlots = InventoryPanel.GetComponentsInChildren<InventorySlot>();
+        for (int i = 0; i < Inventory.INITIAL_CAPACITY; ++i)
+        {
+            var obj = Instantiate(InventorySlotPrefab, Vector3.zero, Quaternion.identity, InventoryPanel);
+            var slot = obj.GetComponent<InventorySlot>();
+            slot.InventoryItemIndex = i;
+            _inventorySlots[i] = slot;
+        }
+        //_inventorySlots = InventoryPanel.GetComponentsInChildren<InventorySlot>();
     }
 
     private void OnDestroy()
@@ -34,7 +44,7 @@ public class InventoryUI : MonoBehaviour
             // display existing
             if (i < _inventory.Items.Count)
             {
-                _inventorySlots[i].SetItem(_inventory.Items[i].Item1, _inventory.Items[i].Item2);
+                _inventorySlots[i].SetItem(_inventory.Items[i].Item, _inventory.Items[i].Count);
             }
             else
             {

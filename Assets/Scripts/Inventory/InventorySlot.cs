@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -9,6 +10,8 @@ public class InventorySlot : ItemSlot, IPointerClickHandler
     public Text StackCountText;
 
     // TODO inventory index
+    [NonSerialized]
+    public int InventoryItemIndex;
 
     public void SetItem(PickupableItem newItem, int stackCount)
     {
@@ -43,15 +46,34 @@ public class InventorySlot : ItemSlot, IPointerClickHandler
 
         if (pointerEventData.button == PointerEventData.InputButton.Left)
         {
-            if (_item == null && _iconFollowingMouse)
+            // started dragging this
+            if (_draggedImage && Icon.sprite == _draggedImage.sprite)
             {
-                // slot in cell
-                // TODO slot in this cell (by index)
-                Inventory.Instance.Add(_item);
+                StackCountText.enabled = false;
+            }
 
-                // set prev position
-                _iconFollowingMouse = null;
-                Icon.gameObject.GetComponent<Canvas>().sortingOrder = 1;
+            // place in empty slot
+            if (_item == null && _draggedItem)
+            {
+                // TODO slot in this cell (by index)
+                //Inventory.Instance.AddAt(_item, InventoryItemIndex);
+                if (_draggedItem is EquippableItem equippable &&
+                    Equipment.Instance.IsEquipped(equippable))
+                {
+                    // unequip
+                    equippable.Use();
+                }
+                else
+                {
+                    Inventory.Instance.Remove(_draggedItem);
+                    Inventory.Instance.Add(_draggedItem);
+                }
+                // TODO if add to inv failed, show icon
+
+
+                _draggedItem = null;
+                Destroy(_draggedImage.gameObject);
+                //_draggedObject.SetActive(false);
             }
         }
     }

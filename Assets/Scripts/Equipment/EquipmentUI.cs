@@ -30,11 +30,11 @@ public class EquipmentUI : MonoBehaviour
         
         if (newItem == null)
         {
-            _equipSlots[(int) oldItem.EquipSlot].ClearSlot();
+            _equipSlots[(int) oldItem.EquipSlotType].ClearSlot();
         }
         else
         {
-            _equipSlots[(int) newItem.EquipSlot].SetItem(newItem);
+            _equipSlots[(int) newItem.EquipSlotType].SetItem(newItem);
         }
     }
 }

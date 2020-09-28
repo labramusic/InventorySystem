@@ -6,13 +6,13 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Equippable", menuName = "Item/Equippable")]
 public class EquippableItem : PickupableItem
 {
-    public EquipSlotType EquipSlot;
+    public EquipSlotType EquipSlotType;
 
     public List<AttributeModifier> Modifiers = new List<AttributeModifier>();
 
     public override bool Interact()
     {
-        if (!Equipment.Instance.EquippedInSlot(EquipSlot))
+        if (!Equipment.Instance.EquippedInSlot(EquipSlotType))
         {
             Equipment.Instance.Equip(this);
             return true;
@@ -25,8 +25,9 @@ public class EquippableItem : PickupableItem
     {
         if (Equipment.Instance.IsEquipped(this))
         {
+            // unequipping
             Debug.Log($"Unequipped {ItemName}.");
-            Equipment.Instance.Unequip(EquipSlot);
+            Equipment.Instance.Unequip(EquipSlotType);
         }
         else
         {
