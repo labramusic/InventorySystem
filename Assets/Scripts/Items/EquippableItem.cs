@@ -23,9 +23,17 @@ public class EquippableItem : PickupableItem
 
     public override void Use()
     {
-        base.Use();
-        Equipment.Instance.Equip(this);
-        Debug.Log($"Equipped {ItemName}.");
+        if (Equipment.Instance.IsEquipped(this))
+        {
+            Debug.Log($"Unequipped {ItemName}.");
+            Equipment.Instance.Unequip(EquipSlot);
+        }
+        else
+        {
+            base.Use();
+            Debug.Log($"Equipped {ItemName}.");
+            Equipment.Instance.Equip(this);
+        }
     }
 }
 

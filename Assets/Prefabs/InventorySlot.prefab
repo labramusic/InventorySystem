@@ -105,7 +105,7 @@ GameObject:
   - component: {fileID: 336976133897604644}
   - component: {fileID: 336976133897604647}
   - component: {fileID: 6777436506492024045}
-  - component: {fileID: 181929685925460891}
+  - component: {fileID: 3718172030332185475}
   m_Layer: 5
   m_Name: InventorySlot
   m_TagString: Untagged
@@ -212,7 +212,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &181929685925460891
+--- !u!114 &3718172030332185475
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -221,7 +221,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 336976133897604641}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b96aa9178df631b4abcb6bb509aab64c, type: 3}
+  m_Script: {fileID: 11500000, guid: 6174812cd691d65408bd148be34d7306, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Icon: {fileID: 336976135337484545}
@@ -237,6 +237,7 @@ GameObject:
   - component: {fileID: 336976135337484544}
   - component: {fileID: 336976135337484550}
   - component: {fileID: 336976135337484545}
+  - component: {fileID: 8071572445155074259}
   m_Layer: 5
   m_Name: Icon
   m_TagString: Untagged
@@ -300,3 +301,24 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!223 &8071572445155074259
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 336976135337484547}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 1
+  m_TargetDisplay: 0

@@ -34,7 +34,7 @@ public class EquipmentUI : MonoBehaviour
         }
         else
         {
-            _equipSlots[(int) newItem.EquipSlot].AddItem(newItem);
+            _equipSlots[(int) newItem.EquipSlot].SetItem(newItem);
         }
     }
 }

@@ -40,8 +40,7 @@ public class PlayerAttributes : MonoBehaviour
         _attributes = new Attribute[numAttributes];
         foreach (var attribute in _baseAttributes)
         {
-            int index = (int)attribute.AttributeName;
-            _attributes[index] = attribute;
+            _attributes[(int) attribute.AttributeName] = attribute;
         }
         OnAttributesUpdateCallback?.Invoke();
 
@@ -65,8 +64,7 @@ public class PlayerAttributes : MonoBehaviour
         {
             foreach (var modifier in oldItem.Modifiers)
             {
-                int index = (int) modifier.AttributeName;
-                _attributes[index].RemoveModifier(modifier.Value);
+                _attributes[(int) modifier.AttributeName].RemoveModifier(modifier.Value);
             }
         }
 
@@ -74,8 +72,7 @@ public class PlayerAttributes : MonoBehaviour
         {
             foreach (var modifier in newItem.Modifiers)
             {
-                int index = (int)modifier.AttributeName;
-                _attributes[index].ApplyModifier(modifier.Value);
+                _attributes[(int) modifier.AttributeName].ApplyModifier(modifier.Value);
             }
         }
 

@@ -69,9 +69,13 @@ public class Equipment : MonoBehaviour
         }
     }
 
+    public bool IsEquipped(EquippableItem item)
+    {
+        return _equippedItems[(int) item.EquipSlot] == item;
+    }
+
     public bool EquippedInSlot(EquipSlotType equipSlot)
     {
-        int slotIndex = (int) equipSlot;
-        return _equippedItems[slotIndex] != null;
+        return _equippedItems[(int)equipSlot] != null;
     }
 }
