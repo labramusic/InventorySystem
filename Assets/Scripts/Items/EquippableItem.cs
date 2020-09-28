@@ -21,19 +21,19 @@ public class EquippableItem : PickupableItem
         return base.Interact();
     }
 
-    public override void Use()
+    public override void Use(int invSlotIndex)
     {
         if (Equipment.Instance.IsEquipped(this))
         {
             // unequipping
             Debug.Log($"Unequipped {ItemName}.");
-            Equipment.Instance.Unequip(EquipSlotType);
+            Equipment.Instance.UnequipTo(EquipSlotType, invSlotIndex);
         }
         else
         {
-            base.Use();
+            base.Use(invSlotIndex);
             Debug.Log($"Equipped {ItemName}.");
-            Equipment.Instance.Equip(this);
+            Equipment.Instance.EquipFrom(this, invSlotIndex);
         }
     }
 }

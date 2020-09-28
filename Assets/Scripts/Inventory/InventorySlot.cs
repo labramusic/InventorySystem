@@ -9,15 +9,20 @@ public class InventorySlot : ItemSlot, IPointerClickHandler
 {
     public Text StackCountText;
 
-    // TODO inventory index
     [NonSerialized]
     public int InventoryItemIndex;
+
+    private void OnEnable()
+    {
+        base.DisplayIcon();
+        DisplayIcon();
+    }
 
     public void SetItem(PickupableItem newItem, int stackCount)
     {
         base.SetItem(newItem);
 
-        if (newItem is Consumable consumable
+        if (newItem is ConsumableItem consumable
             && consumable.StackLimit != 1)
         {
             StackCountText.text = stackCount.ToString();
@@ -40,41 +45,90 @@ public class InventorySlot : ItemSlot, IPointerClickHandler
         StackCountText.enabled = false;
     }
 
-    public new void OnPointerClick(PointerEventData pointerEventData)
+    public void OnPointerClick(PointerEventData pointerEventData)
     {
-        base.OnPointerClick(pointerEventData);
-
+        bool draggingIcon = (UIPanelManager.Instance.DraggedIcon != null);
         if (pointerEventData.button == PointerEventData.InputButton.Left)
         {
-            // started dragging this
-            if (_draggedImage && Icon.sprite == _draggedImage.sprite)
+            if (!draggingIcon && _item)
             {
+                // item selected
+                UIPanelManager.Instance.StartDraggingIcon(Icon);
+                Icon.enabled = false;
                 StackCountText.enabled = false;
-            }
 
-            // place in empty slot
-            if (_item == null && _draggedItem)
+                UIPanelManager.Instance.SelectedInventorySlotIndex = InventoryItemIndex;
+            }
+            else if (draggingIcon)
             {
-                // TODO slot in this cell (by index)
-                //Inventory.Instance.AddAt(_item, InventoryItemIndex);
-                if (_draggedItem is EquippableItem equippable &&
-                    Equipment.Instance.IsEquipped(equippable))
+                if (UIPanelManager.Instance.SelectedInventorySlotIndex != -1)
                 {
-                    // unequip
-                    equippable.Use();
+                    PlaceFromInventory();
                 }
-                else
+                else if (UIPanelManager.Instance.SelectedEquipSlotIndex != -1)
                 {
-                    Inventory.Instance.Remove(_draggedItem);
-                    Inventory.Instance.Add(_draggedItem);
+                    PlaceFromEquipment();
                 }
-                // TODO if add to inv failed, show icon
 
-
-                _draggedItem = null;
-                Destroy(_draggedImage.gameObject);
-                //_draggedObject.SetActive(false);
+                UIPanelManager.Instance.StopDraggingIcon();
+                DisplayIcon();
             }
+        }
+        else if (pointerEventData.button == PointerEventData.InputButton.Right &&
+                 !draggingIcon && _item is EquippableItem)
+        {
+            _item.Use(InventoryItemIndex);
+        }
+        else if (pointerEventData.button == PointerEventData.InputButton.Middle &&
+                 !draggingIcon && _item is ConsumableItem)
+        {
+            _item.Use(InventoryItemIndex);
+        }
+    }
+
+    private void PlaceFromInventory()
+    {
+        if (UIPanelManager.Instance.SelectedInventorySlotIndex == InventoryItemIndex) return;
+
+        var thisItemStack = Inventory.Instance.Items[InventoryItemIndex];
+        Inventory.Instance.RemoveAt(InventoryItemIndex);
+
+        var itemStack = Inventory.Instance.Items[UIPanelManager.Instance.SelectedInventorySlotIndex];
+        Inventory.Instance.RemoveAt(UIPanelManager.Instance.SelectedInventorySlotIndex);
+        Inventory.Instance.AddAt(itemStack, InventoryItemIndex);
+
+        if (thisItemStack != null)
+        {
+            Inventory.Instance.AddAt(thisItemStack, UIPanelManager.Instance.SelectedInventorySlotIndex);
+        }
+    }
+
+    private void PlaceFromEquipment()
+    {
+        var thisItemStack = Inventory.Instance.Items[InventoryItemIndex];
+        Inventory.Instance.RemoveAt(InventoryItemIndex);
+
+        Equipment.Instance.UnequipTo((EquipSlotType)UIPanelManager.Instance.SelectedEquipSlotIndex, InventoryItemIndex);
+
+        if (thisItemStack != null)
+        {
+            if (thisItemStack.Item is EquippableItem equippable)
+            {
+                Equipment.Instance.Equip(equippable);
+            }
+            else
+            {
+                Inventory.Instance.AddAt(thisItemStack, Inventory.Instance.FirstFreeSlot());
+            }
+        }
+    }
+
+    protected override void DisplayIcon()
+    {
+        base.DisplayIcon();
+        if (_item is ConsumableItem consumable && consumable.StackLimit != 1)
+        {
+            StackCountText.enabled = true;
         }
     }
 }

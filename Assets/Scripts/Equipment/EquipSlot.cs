@@ -7,30 +7,52 @@ public class EquipSlot : ItemSlot, IPointerClickHandler
 {
     public EquipSlotType EquipSlotType;
 
+    private void OnEnable()
+    {
+        base.DisplayIcon();
+        DisplayIcon();
+    }
+
     public new void SetItem(PickupableItem newItem)
     {
         base.SetItem(newItem);
     }
 
-    public new void OnPointerClick(PointerEventData pointerEventData)
+    public void OnPointerClick(PointerEventData pointerEventData)
     {
-        base.OnPointerClick(pointerEventData);
-
+        bool draggingIcon = (UIPanelManager.Instance.DraggedIcon != null);
         if (pointerEventData.button == PointerEventData.InputButton.Left)
         {
-            // place in appropriate slot if empty
-            if (_draggedItem is EquippableItem equippable)
+            // new item selected
+            if (!draggingIcon && _item)
             {
-                // try to equip
-                if (equippable.EquipSlotType == EquipSlotType)
-                {
-                    //Equipment.Instance.Equip(equippable);
-                    equippable.Use();
-                }
+                UIPanelManager.Instance.StartDraggingIcon(Icon);
+                Icon.enabled = false;
 
-                _draggedItem = null;
-                Destroy(_draggedImage.gameObject);
+                UIPanelManager.Instance.SelectedEquipSlotIndex = (int)EquipSlotType;
             }
+            else if (draggingIcon)
+            {
+                if (UIPanelManager.Instance.SelectedInventorySlotIndex != -1)
+                {
+                    var itemStack = Inventory.Instance.Items[UIPanelManager.Instance.SelectedInventorySlotIndex];
+                    if (itemStack.Item is EquippableItem equippable &&
+                        equippable.EquipSlotType == EquipSlotType)
+                    {
+                        Inventory.Instance.RemoveAt(UIPanelManager.Instance.SelectedInventorySlotIndex);
+                        Equipment.Instance.EquipFrom(equippable, UIPanelManager.Instance.SelectedInventorySlotIndex);
+
+                        UIPanelManager.Instance.StopDraggingIcon();
+                        DisplayIcon();
+                    }
+                }
+            }
+        }
+        else if (pointerEventData.button == PointerEventData.InputButton.Right &&
+                 !draggingIcon && _item is EquippableItem)
+        {
+            var invSlotIndex = Inventory.Instance.FirstFreeSlot();
+            _item.Use(invSlotIndex);
         }
     }
 }

@@ -13,9 +13,10 @@ public abstract class PickupableItem : Item
         return addedToInventory;
     }
 
-    public virtual void Use()
+    public virtual void Use(int invSlotIndex)
     {
         // remove from inventory
-        Inventory.Instance.Remove(this);
+        //Inventory.Instance.RemoveAt(invSlotIndex);
+        Inventory.Instance.RemoveOneAt(invSlotIndex);
     }
 }

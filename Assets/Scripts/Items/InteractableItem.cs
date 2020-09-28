@@ -5,6 +5,7 @@ using UnityEngine;
 public class InteractableItem : MonoBehaviour
 {
     public Item Item = null;
+    public int StackCount = 1;
 
     public float InteractRadius = 3f;
 
@@ -17,9 +18,12 @@ public class InteractableItem : MonoBehaviour
     public void Interact()
     {
         Debug.Log($"Interacting with item {Item.ItemName}.");
-        if (Item.Interact())
+
+        while (StackCount-- > 0)
         {
-            Destroy(gameObject);
+            if (!Item.Interact()) return;
         }
+
+        Destroy(gameObject);
     }
 }

@@ -32,6 +32,7 @@ public class InventoryUI : MonoBehaviour
         //_inventorySlots = InventoryPanel.GetComponentsInChildren<InventorySlot>();
     }
 
+    // TODO onEnable onDisable
     private void OnDestroy()
     {
         _inventory.OnInventoryUpdateCallback -= UpdateUI;
@@ -39,10 +40,12 @@ public class InventoryUI : MonoBehaviour
 
     private void UpdateUI()
     {
+        // TODO change only currently updated slots!
+
+
         for (int i = 0; i < _inventorySlots.Length; ++i)
         {
-            // display existing
-            if (i < _inventory.Items.Count)
+            if (_inventory.Items[i] != null)
             {
                 _inventorySlots[i].SetItem(_inventory.Items[i].Item, _inventory.Items[i].Count);
             }

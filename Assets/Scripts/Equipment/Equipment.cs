@@ -24,7 +24,7 @@ public class Equipment : MonoBehaviour
 
     private Inventory _inventory;
 
-    private EquippableItem[] _equippedItems;
+    public EquippableItem[] EquippedItems { get; private set; }
 
     //
     public delegate void OnEquipmentChanged(EquippableItem oldItem, EquippableItem newItem);
@@ -36,34 +36,55 @@ public class Equipment : MonoBehaviour
         _inventory = Inventory.Instance;
 
         int numSlots = System.Enum.GetNames(typeof(EquipSlotType)).Length;
-        _equippedItems = new EquippableItem[numSlots];
+        EquippedItems = new EquippableItem[numSlots];
     }
 
     public void Equip(EquippableItem newItem)
     {
-        int slotIndex = (int) newItem.EquipSlotType;
+        EquipFrom(newItem, -1);
+    }
+
+    public void EquipFrom(EquippableItem newItem, int invSlotIndex)
+    {
+        int slotIndex = (int)newItem.EquipSlotType;
 
         EquippableItem oldItem;
-        if ((oldItem = _equippedItems[slotIndex]) != null)
+        if ((oldItem = EquippedItems[slotIndex]) != null)
         {
-            _inventory.Add(oldItem);
+            if (invSlotIndex == -1) invSlotIndex = _inventory.FirstFreeSlot();
+            _inventory.AddAt(new ItemStack(oldItem, 1), invSlotIndex);
         }
 
-        _equippedItems[slotIndex] = newItem;
+        EquippedItems[slotIndex] = newItem;
 
         OnEquipmentChangedCallback?.Invoke(oldItem, newItem);
     }
 
-    public void Unequip(EquipSlotType equipSlotType)
+    public void Unequip(EquipSlotType equipSlot, bool addToInventory = true)
     {
-        int slotIndex = (int) equipSlotType;
+        int slotIndex = (int)equipSlot;
 
         EquippableItem oldItem;
-        if ((oldItem = _equippedItems[slotIndex]) != null)
+        if ((oldItem = EquippedItems[slotIndex]) != null)
         {
-            if (_inventory.Add(oldItem))
+            if (!addToInventory || _inventory.Add(oldItem))
             {
-                _equippedItems[slotIndex] = null;
+                EquippedItems[slotIndex] = null;
+                OnEquipmentChangedCallback?.Invoke(oldItem, null);
+            }
+        }
+    }
+
+    public void UnequipTo(EquipSlotType equipSlotType, int invSlotIndex)
+    {
+        int equipSlotIndex = (int)equipSlotType;
+
+        EquippableItem oldItem;
+        if ((oldItem = EquippedItems[equipSlotIndex]) != null)
+        {
+            if (_inventory.AddAt(new ItemStack(oldItem, 1), invSlotIndex))
+            {
+                EquippedItems[equipSlotIndex] = null;
                 OnEquipmentChangedCallback?.Invoke(oldItem, null);
             }
         }
@@ -71,11 +92,11 @@ public class Equipment : MonoBehaviour
 
     public bool IsEquipped(EquippableItem item)
     {
-        return _equippedItems[(int) item.EquipSlotType] == item;
+        return EquippedItems[(int) item.EquipSlotType] == item;
     }
 
     public bool EquippedInSlot(EquipSlotType equipSlotType)
     {
-        return _equippedItems[(int)equipSlotType] != null;
+        return EquippedItems[(int)equipSlotType] != null;
     }
 }

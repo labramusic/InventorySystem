@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -28,12 +29,27 @@ public class PlayerController : MonoBehaviour
         _moveDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
 
         if (EventSystem.current.IsPointerOverGameObject()) return;
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(0))
         {
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
-
-            RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
+            if (UIPanelManager.Instance.SelectedInventorySlotIndex != -1)
+            {
+                var itemStack = Inventory.Instance.Items[UIPanelManager.Instance.SelectedInventorySlotIndex];
+                Inventory.Instance.RemoveAt(UIPanelManager.Instance.SelectedInventorySlotIndex);
+                ItemSpawner.Instance.SpawnItemOnGround(itemStack);
+                UIPanelManager.Instance.StopDraggingIcon();
+            }
+            else if (UIPanelManager.Instance.SelectedEquipSlotIndex != -1)
+            {
+                var equippable = Equipment.Instance.EquippedItems[UIPanelManager.Instance.SelectedEquipSlotIndex];
+                var itemStack = new ItemStack(equippable, 1);
+                Equipment.Instance.Unequip(equippable.EquipSlotType, false);
+                ItemSpawner.Instance.SpawnItemOnGround(itemStack);
+                UIPanelManager.Instance.StopDraggingIcon();
+            }
+        }
+        else if (Input.GetMouseButtonDown(1))
+        {
+            RaycastHit2D hit = GetRayCastHit();
             if (hit.collider == null) return;
             var item = hit.collider.GetComponent<InteractableItem>();
             if (item != null && Vector2.Distance(hit.collider.gameObject.transform.position, gameObject.transform.position) <= item.InteractRadius)
@@ -42,6 +58,15 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
+    private RaycastHit2D GetRayCastHit()
+    {
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
+
+        return Physics2D.Raycast(mousePos2D, Vector2.zero);
+    }
+    //
 
     private void FixedUpdate()
     {
