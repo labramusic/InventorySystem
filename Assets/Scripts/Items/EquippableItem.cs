@@ -25,8 +25,6 @@ public class EquippableItem : PickupableItem
     {
         if (Equipment.Instance.IsEquipped(this))
         {
-            // unequipping
-            Debug.Log($"Unequipped {ItemName}.");
             Equipment.Instance.UnequipTo(EquipSlotType, invSlotIndex);
         }
         else

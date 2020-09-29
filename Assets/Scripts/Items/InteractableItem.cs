@@ -9,21 +9,19 @@ public class InteractableItem : MonoBehaviour
 
     public float InteractRadius = 3f;
 
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, InteractRadius);
-    }
-
     public void Interact()
     {
-        Debug.Log($"Interacting with item {Item.ItemName}.");
-
         while (StackCount-- > 0)
         {
             if (!Item.Interact()) return;
         }
 
         Destroy(gameObject);
+    }
+
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        if (CollisionTester.Instance.CurrentCollision != CollisionMethodType.Trigger) return;
+        Interact();
     }
 }
