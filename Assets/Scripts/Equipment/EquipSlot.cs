@@ -51,10 +51,9 @@ public class EquipSlot : ItemSlot, IPointerClickHandler
             }
         }
         else if (pointerEventData.button == PointerEventData.InputButton.Right &&
-                 !draggingIcon && _item is EquippableItem)
+                 !draggingIcon && _item is EquippableItem equippable)
         {
-            var invSlotIndex = Inventory.Instance.FirstFreeSlot();
-            _item.Use(invSlotIndex);
+            Equipment.Instance.Unequip(equippable.EquipSlotType);
         }
     }
 }
