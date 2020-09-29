@@ -53,8 +53,8 @@ public class InventoryUI : MonoBehaviour
     {
         // TODO
         return;
-
         //ArrayUtils.ShrinkArrayByRow(_inventorySlots, index);
+
         ArrayUtils.CopyValuesToRow(_inventorySlots, index);
         for (int i = _inventorySlots.Length - Inventory.ROW_SIZE; i < _inventorySlots.Length; ++i)
         {

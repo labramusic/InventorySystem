@@ -23,7 +23,7 @@ public class Inventory : MonoBehaviour
 
     #endregion
 
-    public const int INITIAL_CAPACITY = 8;
+    public const int INITIAL_CAPACITY = 32;
     public const int ROW_SIZE = 4;
 
     public ItemStack[] Items
@@ -122,6 +122,8 @@ public class Inventory : MonoBehaviour
         {
             RemoveAt(index);
         }
+
+        OnInventoryUpdateCallback?.Invoke();
     }
 
     public int FirstFreeSlot()

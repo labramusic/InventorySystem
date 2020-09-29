@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5c5556bee45aba64e8714b1732279b81, type: 3}
-  m_Name: LeatherHelmet
+  m_Name: IronShield
   m_EditorClassIdentifier: 
-  ItemName: Leather Helmet
-  Icon: {fileID: 21300000, guid: 5ff9b869a12e70b4db7a137f84ed920b, type: 3}
-  EquipSlotType: 0
+  ItemName: Iron Shield
+  Icon: {fileID: 21300000, guid: 256205b9c6ca12c45ab7762da8a65631, type: 3}
+  EquipSlotType: 3
   Modifiers:
-  - AttributeName: 2
-    Value: 1
+  - AttributeName: 1
+    Value: 4
