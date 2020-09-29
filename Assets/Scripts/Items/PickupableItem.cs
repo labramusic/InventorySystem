@@ -16,7 +16,6 @@ public abstract class PickupableItem : Item
     public virtual void Use(int invSlotIndex)
     {
         // remove from inventory
-        //Inventory.Instance.RemoveAt(invSlotIndex);
         Inventory.Instance.RemoveOneAt(invSlotIndex);
     }
 }

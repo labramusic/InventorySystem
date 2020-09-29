@@ -34,16 +34,16 @@ public class PlayerController : MonoBehaviour
             if (UIPanelManager.Instance.SelectedInventorySlotIndex != -1)
             {
                 var itemStack = Inventory.Instance.Items[UIPanelManager.Instance.SelectedInventorySlotIndex];
-                Inventory.Instance.RemoveAt(UIPanelManager.Instance.SelectedInventorySlotIndex);
                 ItemSpawner.Instance.SpawnItemOnGround(itemStack);
+                Inventory.Instance.RemoveAt(UIPanelManager.Instance.SelectedInventorySlotIndex);
                 UIPanelManager.Instance.StopDraggingIcon();
             }
             else if (UIPanelManager.Instance.SelectedEquipSlotIndex != -1)
             {
                 var equippable = Equipment.Instance.EquippedItems[UIPanelManager.Instance.SelectedEquipSlotIndex];
                 var itemStack = new ItemStack(equippable, 1);
-                Equipment.Instance.Unequip(equippable.EquipSlotType, false);
                 ItemSpawner.Instance.SpawnItemOnGround(itemStack);
+                Equipment.Instance.Unequip(equippable.EquipSlotType, false);
                 UIPanelManager.Instance.StopDraggingIcon();
             }
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,28 +23,34 @@ public class Inventory : MonoBehaviour
 
     #endregion
 
-    public const int INITIAL_CAPACITY = 32;
+    public const int INITIAL_CAPACITY = 8;
+    public const int ROW_SIZE = 4;
 
-    public ItemStack[] Items { get; private set; }
+    public ItemStack[] Items
+    {
+        get => _items;
+        private set => _items = value;
+    }
 
-    public int Capacity = INITIAL_CAPACITY;
+    private ItemStack[] _items;
 
     //
-    public delegate void OnInventoryUpdate();
+    public delegate void OnInventoryUpdate(bool sizeUpdated=false, int index=-1);
     public OnInventoryUpdate OnInventoryUpdateCallback;
     //
 
     private void Start()
     {
-        Items = new ItemStack[INITIAL_CAPACITY];
+        _items = new ItemStack[INITIAL_CAPACITY];
     }
 
     public bool Add(PickupableItem item)
     {
         bool added = false;
+        bool sizeUpdated = false;
         if (!(item is EquippableItem))
         {
-            foreach (var itemStack in Items)
+            foreach (var itemStack in _items)
             {
                 if (itemStack?.Item != item) continue;
                 var consumable = (ConsumableItem) itemStack.Item;
@@ -59,29 +66,35 @@ public class Inventory : MonoBehaviour
 
         if (!added)
         {
-            for (int i = 0; i < Items.Length; ++i)
+            for (int i = 0; i < _items.Length; ++i)
             {
-                if (Items[i] != null) continue;
+                if (_items[i] != null) continue;
 
-                Items[i] = new ItemStack(item, 1);
+                _items[i] = new ItemStack(item, 1);
                 added = true;
                 break;
             }
         }
 
-        if (!added) return false;
+        if (!added)
+        {
+            // expand capacity
+            Array.Resize(ref _items, _items.Length + ROW_SIZE);
+            added = Add(item);
+            sizeUpdated = true;
+        }
 
-        OnInventoryUpdateCallback?.Invoke();
-        return true;
+        OnInventoryUpdateCallback?.Invoke(sizeUpdated);
+        return added;
     }
 
     public bool AddAt(ItemStack itemStack, int index)
     {
-        if (index < 0 || index >= Capacity) return false;
+        if (index < 0 || index >= _items.Length) return false;
         
-        if (Items[index] == null)
+        if (_items[index] == null)
         {
-            Items[index] = itemStack;
+            _items[index] = itemStack;
             OnInventoryUpdateCallback?.Invoke();
             return true;
         }
@@ -91,27 +104,45 @@ public class Inventory : MonoBehaviour
 
     public void RemoveAt(int index)
     {
-        Items[index] = null;
-        OnInventoryUpdateCallback?.Invoke();
+        _items[index] = null;
+
+        bool sizeUpdated = false;
+        if (_items.Length > INITIAL_CAPACITY && RowIsEmpty(index))
+        {
+            ArrayUtils.ShrinkArrayByRow(_items, index);
+            sizeUpdated = true;
+        }
+
+        OnInventoryUpdateCallback?.Invoke(sizeUpdated, index);
     }
 
     public void RemoveOneAt(int index)
     {
-        if (--Items[index].Count <= 0)
+        if (--_items[index].Count <= 0)
         {
-            Items[index] = null;
+            RemoveAt(index);
         }
-
-        OnInventoryUpdateCallback?.Invoke();
     }
 
     public int FirstFreeSlot()
     {
-        for (int i = 0; i < Items.Length; ++i)
+        for (int i = 0; i < _items.Length; ++i)
         {
-            if (Items[i] == null) return i;
+            if (_items[i] == null) return i;
         }
 
         return -1;
+    }
+
+    private bool RowIsEmpty(int index)
+    {
+        int rowNum = index / ROW_SIZE;
+        int startIndex = ROW_SIZE * rowNum;
+        for (int i = startIndex; i < startIndex + ROW_SIZE; ++i)
+        {
+            if (_items[i] != null) return false;
+        }
+
+        return true;
     }
 }

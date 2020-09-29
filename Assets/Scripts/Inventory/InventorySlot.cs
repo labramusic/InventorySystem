@@ -9,7 +9,7 @@ public class InventorySlot : ItemSlot, IPointerClickHandler
 {
     public Text StackCountText;
 
-    [NonSerialized]
+    //[NonSerialized]
     public int InventoryItemIndex;
 
     private void OnEnable()

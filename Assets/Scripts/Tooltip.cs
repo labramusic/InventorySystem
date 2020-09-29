@@ -51,7 +51,7 @@ public class Tooltip : MonoBehaviour
         {
             foreach (var m in equippable.Modifiers)
             {
-                sb.Append(m.AttributeName.ToString()).Append(": +").Append(m.Value).AppendLine();
+                sb.Append(m.AttributeName.ToString()).Append(" +").Append(m.Value).AppendLine();
             }
         }
         //string.format

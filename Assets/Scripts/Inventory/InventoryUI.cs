@@ -1,47 +1,79 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Animations;
 using UnityEngine;
 
 public class InventoryUI : MonoBehaviour
 {
-    public Transform InventoryPanel;
+    public Transform InventorySlotsContainer;
     public GameObject InventorySlotPrefab;
 
     private Inventory _inventory;
 
-    // TODO dynamic array
-    private InventorySlot[] _inventorySlots = new InventorySlot[Inventory.INITIAL_CAPACITY];
-
-    //private const int INITIAL_SLOTS_NUM = 32;
+    private InventorySlot[] _inventorySlots;
 
     // Start is called before the first frame update
     private void Start()
     {
         _inventory = Inventory.Instance;
         _inventory.OnInventoryUpdateCallback += UpdateUI;
+        _inventorySlots = new InventorySlot[Inventory.INITIAL_CAPACITY];
 
-        // TODO on size change update with callback
         for (int i = 0; i < Inventory.INITIAL_CAPACITY; ++i)
         {
-            var obj = Instantiate(InventorySlotPrefab, Vector3.zero, Quaternion.identity, InventoryPanel);
-            var slot = obj.GetComponent<InventorySlot>();
-            slot.InventoryItemIndex = i;
-            _inventorySlots[i] = slot;
+            _inventorySlots[i] = CreateInventorySlot(i);
         }
-        //_inventorySlots = InventoryPanel.GetComponentsInChildren<InventorySlot>();
     }
 
-    // TODO onEnable onDisable
     private void OnDestroy()
     {
         _inventory.OnInventoryUpdateCallback -= UpdateUI;
     }
 
-    private void UpdateUI()
+    private InventorySlot CreateInventorySlot(int index)
     {
-        // TODO change only currently updated slots!
+        var obj = Instantiate(InventorySlotPrefab, Vector3.zero, Quaternion.identity, InventorySlotsContainer);
+        var slot = obj.GetComponent<InventorySlot>();
+        slot.InventoryItemIndex = index;
+        return slot;
+    }
 
+    private void ExpandSlotsSize()
+    {
+        int startIndex = _inventorySlots.Length;
+        Array.Resize(ref _inventorySlots, Inventory.Instance.Items.Length);
+        for (int i = startIndex; i < startIndex + Inventory.ROW_SIZE; ++i)
+        {
+            _inventorySlots[i] = CreateInventorySlot(i);
+        }
+    }
+
+    private void ShrinkSlotsSize(int index)
+    {
+        // TODO
+        return;
+
+        //ArrayUtils.ShrinkArrayByRow(_inventorySlots, index);
+        ArrayUtils.CopyValuesToRow(_inventorySlots, index);
+        for (int i = _inventorySlots.Length - Inventory.ROW_SIZE; i < _inventorySlots.Length; ++i)
+        {
+            _inventorySlots[i].ClearSlot();
+            Destroy(_inventorySlots[i].gameObject);
+        }
+
+        Array.Resize(ref _inventorySlots, Inventory.Instance.Items.Length);
+    }
+
+    private void UpdateUI(bool sizeUpdated = false, int lastRemovedIndex = -1)
+    {
+        if (sizeUpdated)
+        {
+            if (_inventorySlots.Length < Inventory.Instance.Items.Length)
+                ExpandSlotsSize();
+            else if (_inventorySlots.Length == Inventory.Instance.Items.Length)
+                ShrinkSlotsSize(lastRemovedIndex);
+        }
 
         for (int i = 0; i < _inventorySlots.Length; ++i)
         {

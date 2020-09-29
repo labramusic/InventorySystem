@@ -46,6 +46,11 @@ public class EquipSlot : ItemSlot, IPointerClickHandler
                         DisplayIcon();
                     }
                 }
+                else if (UIPanelManager.Instance.SelectedEquipSlotIndex == (int) EquipSlotType)
+                {
+                    UIPanelManager.Instance.StopDraggingIcon();
+                    DisplayIcon();
+                }
             }
         }
         else if (pointerEventData.button == PointerEventData.InputButton.Right &&
