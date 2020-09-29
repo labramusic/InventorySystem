@@ -1,9 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Net.Mime;
-using System.Text;
+﻿using System.Text;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class Tooltip : MonoBehaviour
@@ -28,7 +24,6 @@ public class Tooltip : MonoBehaviour
 
     private Text _tooltipText;
 
-    // Start is called before the first frame update
     private void Start()
     {
         _tooltipText = GetComponentInChildren<Text>();
@@ -54,7 +49,6 @@ public class Tooltip : MonoBehaviour
                 sb.Append(m.AttributeName.ToString()).Append(" +").Append(m.Value).AppendLine();
             }
         }
-        //string.format
         _tooltipText.text = sb.ToString();
 
         gameObject.SetActive(true);

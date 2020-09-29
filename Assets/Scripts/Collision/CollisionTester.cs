@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum CollisionMethodType
@@ -32,10 +30,10 @@ public class CollisionTester : MonoBehaviour
 
     public void NextCollision()
     {
-        CurrentCollision = (CollisionMethodType)(int)CurrentCollision + 1;
-        if ((int) CurrentCollision >= Enum.GetNames(typeof(CollisionMethodType)).Length - 1)
+        CurrentCollision = (CollisionMethodType)((int)CurrentCollision + 1);
+        if ((int) CurrentCollision > Enum.GetNames(typeof(CollisionMethodType)).Length - 1)
         {
-            CurrentCollision = 0;
+            CurrentCollision = (CollisionMethodType) 0;
         }
 
         Debug.Log($"Using {CurrentCollision} collision.");

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class AttributesUI : MonoBehaviour
@@ -12,7 +10,6 @@ public class AttributesUI : MonoBehaviour
 
     private PlayerAttributes _playerAttributes;
 
-    // Start is called before the first frame update
     private void Start()
     {
         _playerAttributes = PlayerAttributes.Instance;

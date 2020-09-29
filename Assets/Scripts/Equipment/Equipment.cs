@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Equipment : MonoBehaviour
 {
@@ -84,6 +82,7 @@ public class Equipment : MonoBehaviour
         {
             if (_inventory.AddAt(new ItemStack(oldItem, 1), invSlotIndex))
             {
+                Debug.Log($"Unequipped {oldItem.ItemName}.");
                 EquippedItems[equipSlotIndex] = null;
                 OnEquipmentChangedCallback?.Invoke(oldItem, null);
             }

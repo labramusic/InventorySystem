@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Animations;
 using UnityEngine;
 
 public class InventoryUI : MonoBehaviour
@@ -13,7 +10,6 @@ public class InventoryUI : MonoBehaviour
 
     private InventorySlot[] _inventorySlots;
 
-    // Start is called before the first frame update
     private void Start()
     {
         _inventory = Inventory.Instance;

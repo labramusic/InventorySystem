@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -35,7 +33,6 @@ public class UIPanelManager : MonoBehaviour
     [NonSerialized]
     public int SelectedEquipSlotIndex = -1;
 
-    // Start is called before the first frame update
     private void Start()
     {
         InventoryPanel.SetActive(false);
@@ -43,7 +40,6 @@ public class UIPanelManager : MonoBehaviour
         AttributesPanel.SetActive(false);
     }
 
-    // Update is called once per frame
     private void Update()
     {
         if (Input.GetButtonDown("Inventory"))
@@ -84,8 +80,6 @@ public class UIPanelManager : MonoBehaviour
     {
         DraggedIcon = Instantiate(Icon, transform);
         DraggedIcon.GetComponent<Canvas>().sortingOrder += 1;
-        // hide mouse?
-
     }
 
     public void StopDraggingIcon()

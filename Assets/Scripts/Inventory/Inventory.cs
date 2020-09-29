@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Inventory : MonoBehaviour
@@ -109,8 +107,9 @@ public class Inventory : MonoBehaviour
         bool sizeUpdated = false;
         if (_items.Length > INITIAL_CAPACITY && RowIsEmpty(index))
         {
-            ArrayUtils.ShrinkArrayByRow(_items, index);
-            sizeUpdated = true;
+            // TODO
+            //ArrayUtils.ShrinkArrayByRow(_items, index);
+            //sizeUpdated = true;
         }
 
         OnInventoryUpdateCallback?.Invoke(sizeUpdated, index);

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerAttributes : MonoBehaviour
@@ -33,7 +31,6 @@ public class PlayerAttributes : MonoBehaviour
 
     private Attribute[] _attributes;
 
-    // Start is called before the first frame update
     private void Start()
     {
         int numAttributes = System.Enum.GetNames(typeof(AttributeNameType)).Length;

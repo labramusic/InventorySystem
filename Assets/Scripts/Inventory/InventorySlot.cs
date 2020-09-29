@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -9,7 +7,7 @@ public class InventorySlot : ItemSlot, IPointerClickHandler
 {
     public Text StackCountText;
 
-    //[NonSerialized]
+    [NonSerialized]
     public int InventoryItemIndex;
 
     private void OnEnable()
