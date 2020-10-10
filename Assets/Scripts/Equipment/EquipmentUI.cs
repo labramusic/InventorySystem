@@ -1,37 +1,45 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class EquipmentUI : MonoBehaviour
+public class EquipmentUI : UIPanel
 {
-    public Transform EquipmentPanel;
-
-    private Equipment _equipment;
-
     private EquipSlot[] _equipSlots;
 
-    private void Start()
+    protected override void Start()
     {
-        _equipment = Equipment.Instance;
-        _equipment.OnEquipmentChangedCallback += UpdateUI;
+        base.Start();
+        ToggleButton = "Equipment";
 
-        _equipSlots = EquipmentPanel.GetComponentsInChildren<EquipSlot>();
+        _equipSlots = Panel.GetComponentsInChildren<EquipSlot>();
+
+        EventManager.Instance.AddListener(EventName.EquipmentChanged, OnEquipmentChanged);
     }
 
     private void OnDestroy()
     {
-        _equipment.OnEquipmentChangedCallback -= UpdateUI;
+        EventManager.Instance.RemoveListener(EventName.EquipmentChanged, OnEquipmentChanged);
     }
 
-    private void UpdateUI(EquippableItem oldItem, EquippableItem newItem)
+    public override void TogglePanel()
     {
+        base.TogglePanel();
+        EventManager.Instance.InvokeEvent(EventName.EquipmentPanelToggled,
+            new PanelToggledEventArgs(Panel.activeSelf));
+    }
+
+    private void OnEquipmentChanged(EventArgs args)
+    {
+        if (!(args is EquipmentChangedEventArgs eArgs)) return;
         // update only changed slot
-        
-        if (newItem == null)
+
+        if (eArgs.NewItem == null)
         {
-            _equipSlots[(int) oldItem.EquipSlotType].ClearSlot();
+            _equipSlots[(int) eArgs.OldItem.EquipSlotType].ClearSlot();
         }
         else
         {
-            _equipSlots[(int) newItem.EquipSlotType].SetItem(newItem);
+            _equipSlots[(int) eArgs.NewItem.EquipSlotType].SetItem(eArgs.NewItem);
         }
     }
 }

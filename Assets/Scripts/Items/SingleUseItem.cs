@@ -3,9 +3,8 @@
 [CreateAssetMenu(fileName = "New Single Use", menuName = "Item/SingleUse")]
 public class SingleUseItem : Item
 {
-    public override bool Interact()
+    public override void Interact()
     {
         Debug.Log($"Consumed {ItemName}.");
-        return true;
     }
 }

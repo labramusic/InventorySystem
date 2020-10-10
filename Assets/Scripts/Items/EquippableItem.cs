@@ -8,29 +8,15 @@ public class EquippableItem : PickupableItem
 
     public List<AttributeModifier> Modifiers = new List<AttributeModifier>();
 
-    public override bool Interact()
+    public override void Interact()
     {
-        if (!Equipment.Instance.EquippedInSlot(EquipSlotType))
-        {
-            Equipment.Instance.Equip(this);
-            return true;
-        }
-
-        return base.Interact();
+        EventManager.Instance.InvokeEvent(EventName.EquipmentPickedUp, new EquipmentPickedUpEventArgs(this));
     }
 
     public override void Use(int invSlotIndex)
     {
-        if (Equipment.Instance.IsEquipped(this))
-        {
-            Equipment.Instance.UnequipTo(EquipSlotType, invSlotIndex);
-        }
-        else
-        {
-            base.Use(invSlotIndex);
-            Debug.Log($"Equipped {ItemName}.");
-            Equipment.Instance.EquipFrom(this, invSlotIndex);
-        }
+        base.Use(invSlotIndex);
+        EventManager.Instance.InvokeEvent(EventName.EquipmentUsed, new EquipmentUsedEventArgs(this, invSlotIndex));
     }
 }
 

@@ -45,59 +45,62 @@ public class InventorySlot : ItemSlot, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData pointerEventData)
     {
-        bool draggingIcon = (UIPanelManager.Instance.DraggedIcon != null);
+        bool draggingIcon = (ItemSelector.Instance.DraggedIcon != null);
         if (pointerEventData.button == PointerEventData.InputButton.Left)
         {
             if (!draggingIcon && _item)
             {
                 // item selected
-                UIPanelManager.Instance.StartDraggingIcon(Icon);
+                ItemSelector.Instance.SelectedInventorySlotIndex = InventoryItemIndex;
+                ItemSelector.Instance.StartDraggingIcon(Icon);
                 Icon.enabled = false;
                 StackCountText.enabled = false;
-
-                UIPanelManager.Instance.SelectedInventorySlotIndex = InventoryItemIndex;
+                Tooltip.Instance.Hide();
             }
             else if (draggingIcon)
             {
-                if (UIPanelManager.Instance.SelectedInventorySlotIndex != -1)
+                if (ItemSelector.Instance.SelectedInventorySlotIndex != -1)
                 {
                     PlaceFromInventory();
                 }
-                else if (UIPanelManager.Instance.SelectedEquipSlotIndex != -1)
+                else if (ItemSelector.Instance.SelectedEquipSlotIndex != -1)
                 {
                     PlaceFromEquipment();
                 }
 
-                UIPanelManager.Instance.StopDraggingIcon();
+                ItemSelector.Instance.StopDraggingIcon();
                 DisplayIcon();
+                Tooltip.Instance.Show(_item);
             }
         }
         else if (pointerEventData.button == PointerEventData.InputButton.Right &&
                  !draggingIcon && _item is EquippableItem)
         {
             _item.Use(InventoryItemIndex);
+            Tooltip.Instance.Hide();
         }
         else if (pointerEventData.button == PointerEventData.InputButton.Middle &&
                  !draggingIcon && _item is ConsumableItem)
         {
             _item.Use(InventoryItemIndex);
+            if (!_item) Tooltip.Instance.Hide();
         }
     }
 
     private void PlaceFromInventory()
     {
-        if (UIPanelManager.Instance.SelectedInventorySlotIndex == InventoryItemIndex) return;
+        if (ItemSelector.Instance.SelectedInventorySlotIndex == InventoryItemIndex) return;
 
         var thisItemStack = Inventory.Instance.Items[InventoryItemIndex];
         Inventory.Instance.RemoveAt(InventoryItemIndex);
 
-        var itemStack = Inventory.Instance.Items[UIPanelManager.Instance.SelectedInventorySlotIndex];
-        Inventory.Instance.RemoveAt(UIPanelManager.Instance.SelectedInventorySlotIndex);
+        var itemStack = Inventory.Instance.Items[ItemSelector.Instance.SelectedInventorySlotIndex];
+        Inventory.Instance.RemoveAt(ItemSelector.Instance.SelectedInventorySlotIndex);
         Inventory.Instance.AddAt(itemStack, InventoryItemIndex);
 
         if (thisItemStack != null)
         {
-            Inventory.Instance.AddAt(thisItemStack, UIPanelManager.Instance.SelectedInventorySlotIndex);
+            Inventory.Instance.AddAt(thisItemStack, ItemSelector.Instance.SelectedInventorySlotIndex);
         }
     }
 
@@ -106,11 +109,12 @@ public class InventorySlot : ItemSlot, IPointerClickHandler
         var thisItemStack = Inventory.Instance.Items[InventoryItemIndex];
         Inventory.Instance.RemoveAt(InventoryItemIndex);
 
-        Equipment.Instance.UnequipTo((EquipSlotType)UIPanelManager.Instance.SelectedEquipSlotIndex, InventoryItemIndex);
+        EquipSlotType selectedEquipSlotType = (EquipSlotType) ItemSelector.Instance.SelectedEquipSlotIndex;
+        Equipment.Instance.UnequipTo(selectedEquipSlotType, InventoryItemIndex);
 
         if (thisItemStack != null)
         {
-            if (thisItemStack.Item is EquippableItem equippable)
+            if (thisItemStack.Item is EquippableItem equippable && equippable.EquipSlotType.Equals(selectedEquipSlotType))
             {
                 Equipment.Instance.Equip(equippable);
             }

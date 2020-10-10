@@ -21,12 +21,13 @@ public class ItemSpawner : MonoBehaviour
     #endregion
 
     public GameObject ItemPrefab;
+    public GameObject Player;
 
-    private Item[] items;
+    private Item[] _items;
 
     private void Start()
     {
-        items = Resources.LoadAll<Item>("Items");
+        _items = Resources.LoadAll<Item>("Items");
     }
 
     public void SpawnItemOnGround(ItemStack itemStack, Vector3 position)
@@ -41,10 +42,10 @@ public class ItemSpawner : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            int i = Random.Range(0, items.Length);
-            if (!(items[i] is PickupableItem pickupable)) return;
+            int i = Random.Range(0, _items.Length);
+            if (!(_items[i] is PickupableItem pickupable)) return;
             var itemstack = new ItemStack(pickupable, 1);
-            SpawnItemOnGround(itemstack, transform.position);
+            SpawnItemOnGround(itemstack, Player.transform.position);
         }
     }
 }

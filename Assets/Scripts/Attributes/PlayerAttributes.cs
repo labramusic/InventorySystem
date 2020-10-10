@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerAttributes : MonoBehaviour
@@ -21,11 +22,6 @@ public class PlayerAttributes : MonoBehaviour
 
     #endregion
 
-    //
-    public delegate void OnAttributesUpdate();
-    public OnAttributesUpdate OnAttributesUpdateCallback;
-    //
-
     [SerializeField] 
     private List<Attribute> _baseAttributes = new List<Attribute>();
 
@@ -33,20 +29,21 @@ public class PlayerAttributes : MonoBehaviour
 
     private void Start()
     {
-        int numAttributes = System.Enum.GetNames(typeof(AttributeNameType)).Length;
+        int numAttributes = Enum.GetNames(typeof(AttributeNameType)).Length;
         _attributes = new Attribute[numAttributes];
         foreach (var attribute in _baseAttributes)
         {
             _attributes[(int) attribute.AttributeName] = attribute;
         }
-        OnAttributesUpdateCallback?.Invoke();
 
-        Equipment.Instance.OnEquipmentChangedCallback += ApplyModifiers;
+        EventManager.Instance.InvokeEvent(EventName.AttributesUpdated, new AttributesUpdatedEventArgs());
+
+        EventManager.Instance.AddListener(EventName.EquipmentChanged, OnEquipmentChanged);
     }
 
     private void OnDestroy()
     {
-        Equipment.Instance.OnEquipmentChangedCallback -= ApplyModifiers;
+        EventManager.Instance.RemoveListener(EventName.EquipmentChanged, OnEquipmentChanged);
     }
 
     public int GetAttributeValue(AttributeNameType attributeName)
@@ -55,24 +52,27 @@ public class PlayerAttributes : MonoBehaviour
         return (_attributes?[index] != null) ? _attributes[index].GetValue() : 0;
     }
 
-    private void ApplyModifiers(EquippableItem oldItem, EquippableItem newItem)
+    private void OnEquipmentChanged(EventArgs args)
     {
-        if (oldItem != null)
+        if (!(args is EquipmentChangedEventArgs eArgs)) return;
+
+        // apply modifiers
+        if (eArgs.OldItem != null)
         {
-            foreach (var modifier in oldItem.Modifiers)
+            foreach (var modifier in eArgs.OldItem.Modifiers)
             {
                 _attributes[(int) modifier.AttributeName].RemoveModifier(modifier.Value);
             }
         }
 
-        if (newItem != null)
+        if (eArgs.NewItem != null)
         {
-            foreach (var modifier in newItem.Modifiers)
+            foreach (var modifier in eArgs.NewItem.Modifiers)
             {
                 _attributes[(int) modifier.AttributeName].ApplyModifier(modifier.Value);
             }
         }
 
-        OnAttributesUpdateCallback?.Invoke();
+        EventManager.Instance.InvokeEvent(EventName.AttributesUpdated, new AttributesUpdatedEventArgs());
     }
 }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class Equipment : MonoBehaviour
 {
@@ -24,17 +25,21 @@ public class Equipment : MonoBehaviour
 
     public EquippableItem[] EquippedItems { get; private set; }
 
-    //
-    public delegate void OnEquipmentChanged(EquippableItem oldItem, EquippableItem newItem);
-    public OnEquipmentChanged OnEquipmentChangedCallback;
-    //
-
     private void Start()
     {
         _inventory = Inventory.Instance;
 
         int numSlots = System.Enum.GetNames(typeof(EquipSlotType)).Length;
         EquippedItems = new EquippableItem[numSlots];
+
+        EventManager.Instance.AddListener(EventName.EquipmentPickedUp, OnEquipmentPickedUp);
+        EventManager.Instance.AddListener(EventName.EquipmentUsed, OnEquipmentUsed);
+    }
+
+    private void OnDestroy()
+    {
+        EventManager.Instance.RemoveListener(EventName.EquipmentPickedUp, OnEquipmentPickedUp);
+        EventManager.Instance.RemoveListener(EventName.EquipmentUsed, OnEquipmentUsed);
     }
 
     public void Equip(EquippableItem newItem)
@@ -54,37 +59,31 @@ public class Equipment : MonoBehaviour
         }
 
         EquippedItems[slotIndex] = newItem;
+        Debug.Log($"Equipped {newItem.ItemName}.");
 
-        OnEquipmentChangedCallback?.Invoke(oldItem, newItem);
+        EventManager.Instance.InvokeEvent(EventName.EquipmentChanged,
+            new EquipmentChangedEventArgs(oldItem, newItem));
     }
 
-    public void Unequip(EquipSlotType equipSlot, bool addToInventory = true)
+    public void Unequip(EquipSlotType equipSlotType, bool addToInventory = true)
     {
-        int slotIndex = (int)equipSlot;
-
-        EquippableItem oldItem;
-        if ((oldItem = EquippedItems[slotIndex]) != null)
-        {
-            if (!addToInventory || _inventory.Add(oldItem))
-            {
-                EquippedItems[slotIndex] = null;
-                OnEquipmentChangedCallback?.Invoke(oldItem, null);
-            }
-        }
+        UnequipTo(equipSlotType, -1, addToInventory);
     }
 
-    public void UnequipTo(EquipSlotType equipSlotType, int invSlotIndex)
+    public void UnequipTo(EquipSlotType equipSlotType, int invSlotIndex, bool addToInventory = true)
     {
         int equipSlotIndex = (int)equipSlotType;
 
         EquippableItem oldItem;
         if ((oldItem = EquippedItems[equipSlotIndex]) != null)
         {
-            if (_inventory.AddAt(new ItemStack(oldItem, 1), invSlotIndex))
+            if (invSlotIndex == -1) invSlotIndex = _inventory.FirstFreeSlot();
+            if (!addToInventory || _inventory.AddAt(new ItemStack(oldItem, 1), invSlotIndex))
             {
-                Debug.Log($"Unequipped {oldItem.ItemName}.");
                 EquippedItems[equipSlotIndex] = null;
-                OnEquipmentChangedCallback?.Invoke(oldItem, null);
+                Debug.Log($"Unequipped {oldItem.ItemName}.");
+                EventManager.Instance.InvokeEvent(EventName.EquipmentChanged,
+                    new EquipmentChangedEventArgs(oldItem, null));
             }
         }
     }
@@ -97,5 +96,31 @@ public class Equipment : MonoBehaviour
     public bool EquippedInSlot(EquipSlotType equipSlotType)
     {
         return EquippedItems[(int)equipSlotType] != null;
+    }
+
+    private void OnEquipmentPickedUp(EventArgs args)
+    {
+        if (!(args is EquipmentPickedUpEventArgs eArgs)) return;
+        if (!EquippedInSlot(eArgs.EquippableItem.EquipSlotType))
+        {
+            Equip(eArgs.EquippableItem);
+        }
+        else
+        {
+            EventManager.Instance.InvokeEvent(EventName.ItemPickedUp, new ItemPickedUpEventArgs(eArgs.EquippableItem));
+        }
+    }
+
+    private void OnEquipmentUsed(EventArgs args)
+    {
+        if (!(args is EquipmentUsedEventArgs eArgs)) return;
+        if (IsEquipped(eArgs.EquippableItem))
+        {
+            UnequipTo(eArgs.EquippableItem.EquipSlotType, eArgs.InventorySlotIndex);
+        }
+        else
+        {
+            EquipFrom(eArgs.EquippableItem, eArgs.InventorySlotIndex);
+        }
     }
 }

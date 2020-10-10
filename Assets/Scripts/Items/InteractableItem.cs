@@ -11,15 +11,9 @@ public class InteractableItem : MonoBehaviour
     {
         while (StackCount-- > 0)
         {
-            if (!Item.Interact()) return;
+            Item.Interact();
         }
 
         Destroy(gameObject);
-    }
-
-    private void OnTriggerEnter2D(Collider2D col)
-    {
-        if (CollisionTester.Instance.CurrentCollision != CollisionMethodType.Trigger) return;
-        Interact();
     }
 }

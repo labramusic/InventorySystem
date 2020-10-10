@@ -1,32 +1,65 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class AttributesUI : MonoBehaviour
+public class AttributesUI : UIPanel
 {
-    public Text StrengthAttrValue;
-    public Text VitalityAttrValue;
-    public Text IntelligenceAttrValue;
-    public Text AgilityAttrValue;
-
     private PlayerAttributes _playerAttributes;
 
-    private void Start()
+    private Text[] _attributeLabelTexts;
+    private Text[] _attributeValTexts;
+
+    protected override void Start()
     {
+        base.Start();
+        ToggleButton = "Attributes";
+
         _playerAttributes = PlayerAttributes.Instance;
-        _playerAttributes.OnAttributesUpdateCallback += UpdateUI;
-        UpdateUI();
+        InitializeText();
+
+        EventManager.Instance.AddListener(EventName.AttributesUpdated, OnAttributesUpdated);
+        OnAttributesUpdated(new AttributesUpdatedEventArgs());
     }
 
     private void OnDestroy()
     {
-        _playerAttributes.OnAttributesUpdateCallback -= UpdateUI;
+        EventManager.Instance.RemoveListener(EventName.AttributesUpdated, OnAttributesUpdated);
     }
 
-    private void UpdateUI()
+    private void InitializeText()
     {
-        StrengthAttrValue.text = _playerAttributes.GetAttributeValue(AttributeNameType.Strength).ToString();
-        VitalityAttrValue.text = _playerAttributes.GetAttributeValue(AttributeNameType.Vitality).ToString();
-        IntelligenceAttrValue.text = _playerAttributes.GetAttributeValue(AttributeNameType.Intelligence).ToString();
-        AgilityAttrValue.text = _playerAttributes.GetAttributeValue(AttributeNameType.Agility).ToString();
+        int numAttributes = Enum.GetNames(typeof(AttributeNameType)).Length;
+        _attributeLabelTexts = new Text[numAttributes];
+        _attributeValTexts = new Text[numAttributes];
+        for (int i = 0; i < numAttributes; ++i)
+        {
+            _attributeLabelTexts[i] = CreateText((AttributeNameType)i + "AttrTitle", (AttributeNameType)i + ":", TextAnchor.MiddleLeft);
+            _attributeValTexts[i] = CreateText((AttributeNameType)i + "AttrValue", _playerAttributes.GetAttributeValue((AttributeNameType)i).ToString(), TextAnchor.MiddleCenter);
+        }
+    }
+
+    private Text CreateText(string title, string text, TextAnchor alignment)
+    {
+        var textObject = new GameObject(title);
+        textObject.transform.SetParent(Panel.transform);
+        var textComponent = textObject.AddComponent<Text>();
+        textComponent.text = text;
+        textComponent.font = Font.CreateDynamicFontFromOSFont("Arial", 17);
+        textComponent.fontSize = 17;
+        textComponent.color = new Color32(221, 221, 221, 255);
+        textComponent.alignment = alignment;
+
+        return textComponent;
+    }
+
+    private void OnAttributesUpdated(EventArgs args)
+    {
+        if (!(args is AttributesUpdatedEventArgs)) return;
+
+        int numAttributes = Enum.GetNames(typeof(AttributeNameType)).Length;
+        for (int i = 0; i < numAttributes; ++i)
+        {
+            _attributeValTexts[i].text = _playerAttributes.GetAttributeValue((AttributeNameType) i).ToString();
+        }
     }
 }

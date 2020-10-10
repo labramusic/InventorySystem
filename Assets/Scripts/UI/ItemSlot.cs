@@ -5,7 +5,6 @@ using UnityEngine.UI;
 public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public Image Icon;
-
     protected PickupableItem _item;
 
     protected void SetItem(PickupableItem newItem)
@@ -34,14 +33,14 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (_item != null && UIPanelManager.Instance.DraggedIcon == null)
+        if (_item != null && ItemSelector.Instance.DraggedIcon == null)
         {
-            Tooltip.Instance.GenerateTooltip(_item);
+            Tooltip.Instance.Show(_item);
         }
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        Tooltip.Instance.gameObject.SetActive(false);
+        Tooltip.Instance.Hide();
     }
 }

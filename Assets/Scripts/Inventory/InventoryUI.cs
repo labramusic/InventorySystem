@@ -1,7 +1,8 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class InventoryUI : MonoBehaviour
+public class InventoryUI : UIPanel
 {
     public Transform InventorySlotsContainer;
     public GameObject InventorySlotPrefab;
@@ -10,21 +11,31 @@ public class InventoryUI : MonoBehaviour
 
     private InventorySlot[] _inventorySlots;
 
-    private void Start()
+    protected override void Start()
     {
-        _inventory = Inventory.Instance;
-        _inventory.OnInventoryUpdateCallback += UpdateUI;
-        _inventorySlots = new InventorySlot[Inventory.INITIAL_CAPACITY];
+        base.Start();
+        ToggleButton = "Inventory";
 
+        _inventory = Inventory.Instance;
+        _inventorySlots = new InventorySlot[Inventory.INITIAL_CAPACITY];
         for (int i = 0; i < Inventory.INITIAL_CAPACITY; ++i)
         {
             _inventorySlots[i] = CreateInventorySlot(i);
         }
+
+        EventManager.Instance.AddListener(EventName.InventoryUpdated, OnInventoryUpdated);
     }
 
     private void OnDestroy()
     {
-        _inventory.OnInventoryUpdateCallback -= UpdateUI;
+        EventManager.Instance.RemoveListener(EventName.InventoryUpdated, OnInventoryUpdated);
+    }
+
+    public override void TogglePanel()
+    {
+        base.TogglePanel();
+        EventManager.Instance.InvokeEvent(EventName.InventoryPanelToggled,
+            new PanelToggledEventArgs(Panel.activeSelf));
     }
 
     private InventorySlot CreateInventorySlot(int index)
@@ -48,7 +59,6 @@ public class InventoryUI : MonoBehaviour
     private void ShrinkSlotsSize(int index)
     {
         // TODO
-        return;
         //ArrayUtils.ShrinkArrayByRow(_inventorySlots, index);
 
         ArrayUtils.CopyValuesToRow(_inventorySlots, index);
@@ -61,14 +71,15 @@ public class InventoryUI : MonoBehaviour
         Array.Resize(ref _inventorySlots, Inventory.Instance.Items.Length);
     }
 
-    private void UpdateUI(bool sizeUpdated = false, int lastRemovedIndex = -1)
+    private void OnInventoryUpdated(EventArgs args)
     {
-        if (sizeUpdated)
+        if (!(args is InventoryUpdatedEventArgs eArgs)) return;
+        if (eArgs.SizeUpdated)
         {
             if (_inventorySlots.Length < Inventory.Instance.Items.Length)
                 ExpandSlotsSize();
-            else if (_inventorySlots.Length == Inventory.Instance.Items.Length)
-                ShrinkSlotsSize(lastRemovedIndex);
+            //else if (_inventorySlots.Length == Inventory.Instance.Items.Length)
+                //ShrinkSlotsSize(eArgs.LastRemovedIndex);
         }
 
         for (int i = 0; i < _inventorySlots.Length; ++i)

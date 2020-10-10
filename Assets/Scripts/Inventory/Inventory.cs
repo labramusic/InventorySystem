@@ -32,14 +32,17 @@ public class Inventory : MonoBehaviour
 
     private ItemStack[] _items;
 
-    //
-    public delegate void OnInventoryUpdate(bool sizeUpdated=false, int index=-1);
-    public OnInventoryUpdate OnInventoryUpdateCallback;
-    //
-
     private void Start()
     {
         _items = new ItemStack[INITIAL_CAPACITY];
+        EventManager.Instance.AddListener(EventName.ItemPickedUp, OnItemPickedUp);
+        EventManager.Instance.AddListener(EventName.ItemUsed, OnItemUsed);
+    }
+
+    private void OnDestroy()
+    {
+        EventManager.Instance.RemoveListener(EventName.ItemPickedUp, OnItemPickedUp);
+        EventManager.Instance.RemoveListener(EventName.ItemUsed, OnItemUsed);
     }
 
     public bool Add(PickupableItem item)
@@ -82,7 +85,8 @@ public class Inventory : MonoBehaviour
             sizeUpdated = true;
         }
 
-        OnInventoryUpdateCallback?.Invoke(sizeUpdated);
+        EventManager.Instance.InvokeEvent(EventName.InventoryUpdated, 
+            new InventoryUpdatedEventArgs(sizeUpdated));
         return added;
     }
 
@@ -93,7 +97,8 @@ public class Inventory : MonoBehaviour
         if (_items[index] == null)
         {
             _items[index] = itemStack;
-            OnInventoryUpdateCallback?.Invoke();
+            EventManager.Instance.InvokeEvent(EventName.InventoryUpdated, 
+                new InventoryUpdatedEventArgs());
             return true;
         }
 
@@ -112,17 +117,22 @@ public class Inventory : MonoBehaviour
             //sizeUpdated = true;
         }
 
-        OnInventoryUpdateCallback?.Invoke(sizeUpdated, index);
+        EventManager.Instance.InvokeEvent(EventName.InventoryUpdated, 
+            new InventoryUpdatedEventArgs(sizeUpdated, index));
     }
 
     public void RemoveOneAt(int index)
     {
+        if (index < 0 || index >= _items.Length || _items[index] == null) return;
+
         if (--_items[index].Count <= 0)
         {
             RemoveAt(index);
+            return;
         }
 
-        OnInventoryUpdateCallback?.Invoke();
+        EventManager.Instance.InvokeEvent(EventName.InventoryUpdated, 
+            new InventoryUpdatedEventArgs());
     }
 
     public int FirstFreeSlot()
@@ -132,7 +142,12 @@ public class Inventory : MonoBehaviour
             if (_items[i] == null) return i;
         }
 
-        return -1;
+        // expand capacity
+        int freeSlot = _items.Length;
+        Array.Resize(ref _items, _items.Length + ROW_SIZE);
+        EventManager.Instance.InvokeEvent(EventName.InventoryUpdated, 
+            new InventoryUpdatedEventArgs(true));
+        return freeSlot;
     }
 
     private bool RowIsEmpty(int index)
@@ -145,5 +160,18 @@ public class Inventory : MonoBehaviour
         }
 
         return true;
+    }
+
+    private void OnItemPickedUp(EventArgs args)
+    {
+        if (!(args is ItemPickedUpEventArgs eArgs)) return;
+        Add(eArgs.PickupableItem);
+        Debug.Log($"Picked up {eArgs.PickupableItem.ItemName}.");
+    }
+
+    private void OnItemUsed(EventArgs args)
+    {
+        if (!(args is ItemUsedEventArgs eArgs)) return;
+        RemoveOneAt(eArgs.InventorySlotIndex);
     }
 }
