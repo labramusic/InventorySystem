@@ -109,14 +109,15 @@ public class InventorySlot : ItemSlot, IPointerClickHandler
         var thisItemStack = Inventory.Instance.Items[InventoryItemIndex];
         Inventory.Instance.RemoveAt(InventoryItemIndex);
 
-        EquipSlotType selectedEquipSlotType = (EquipSlotType) ItemSelector.Instance.SelectedEquipSlotIndex;
-        Equipment.Instance.UnequipTo(selectedEquipSlotType, InventoryItemIndex);
+        EquipSlotNameType selectedEquipSlotName = (EquipSlotNameType) ItemSelector.Instance.SelectedEquipSlotIndex;
+        Equipment.Instance.UnequipTo(selectedEquipSlotName, InventoryItemIndex);
 
         if (thisItemStack != null)
         {
-            if (thisItemStack.Item is EquippableItem equippable && equippable.EquipSlotType.Equals(selectedEquipSlotType))
+            if (thisItemStack.Item is EquippableItem equippable && 
+                equippable.EquipSlotType == Equipment.Instance.GetSlotType(selectedEquipSlotName))
             {
-                Equipment.Instance.Equip(equippable);
+                Equipment.Instance.Equip(equippable, selectedEquipSlotName);
             }
             else
             {

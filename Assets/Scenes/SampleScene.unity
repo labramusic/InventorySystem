@@ -292,6 +292,11 @@ PrefabInstance:
       propertyPath: EquipSlotType
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 2603681468780757803, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: EquipSlotName
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -330,7 +335,7 @@ PrefabInstance:
     - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
         type: 3}
@@ -409,6 +414,136 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
     type: 3}
   m_PrefabInstance: {fileID: 310991917}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &318632844
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1657599218}
+    m_Modifications:
+    - target: {fileID: 2603681468780757803, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: EquipSlotType
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -71.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 97.19998
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841252, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_Name
+      value: EquipSlotLeftRing
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e84bd64b05c2f5d419b0f020f7ff0486, type: 3}
+--- !u!224 &318632845 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+    type: 3}
+  m_PrefabInstance: {fileID: 318632844}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &350251494
 GameObject:
@@ -796,6 +931,11 @@ PrefabInstance:
       propertyPath: EquipSlotType
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2603681468780757803, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: EquipSlotName
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -834,7 +974,7 @@ PrefabInstance:
     - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
         type: 3}
@@ -2233,6 +2373,11 @@ PrefabInstance:
       propertyPath: EquipSlotType
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 2603681468780757803, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: EquipSlotName
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2271,7 +2416,7 @@ PrefabInstance:
     - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
         type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
         type: 3}
@@ -9531,7 +9676,9 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 318632845}
   - {fileID: 336976134189937520}
+  - {fileID: 2126067997}
   - {fileID: 564688751}
   - {fileID: 310991918}
   - {fileID: 1779717403}
@@ -9622,6 +9769,11 @@ PrefabInstance:
       propertyPath: EquipSlotType
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 2603681468780757803, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: EquipSlotName
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -9660,7 +9812,7 @@ PrefabInstance:
     - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
         type: 3}
@@ -10189,6 +10341,141 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &2126067996
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 1657599218}
+    m_Modifications:
+    - target: {fileID: 2603681468780757803, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: EquipSlotType
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2603681468780757803, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: EquipSlotName
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 75.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 97.19998
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6892094226692841252, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: m_Name
+      value: EquipSlotRightRing
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e84bd64b05c2f5d419b0f020f7ff0486, type: 3}
+--- !u!224 &2126067997 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+    type: 3}
+  m_PrefabInstance: {fileID: 2126067996}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2131417027
 GameObject:
   m_ObjectHideFlags: 0
@@ -10316,6 +10603,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1657599218}
     m_Modifications:
+    - target: {fileID: 2603681468780757803, guid: e84bd64b05c2f5d419b0f020f7ff0486,
+        type: 3}
+      propertyPath: EquipSlotName
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -10354,7 +10646,7 @@ PrefabInstance:
     - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
         type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6892094226692841251, guid: e84bd64b05c2f5d419b0f020f7ff0486,
         type: 3}

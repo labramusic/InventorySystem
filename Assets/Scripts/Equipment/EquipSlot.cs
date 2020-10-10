@@ -1,8 +1,18 @@
 ﻿using UnityEngine.EventSystems;
 
+public enum EquipSlotType
+{
+    Head, MainHand, Torso, OffHand, Feet, Ring
+}
+
+public enum EquipSlotNameType
+{
+    LeftRing, Head, RightRing, MainHand, Torso, OffHand, Feet
+}
+
 public class EquipSlot : ItemSlot, IPointerClickHandler
 {
-    public EquipSlotType EquipSlotType;
+    public EquipSlotNameType EquipSlotName;
 
     private void OnEnable()
     {
@@ -10,7 +20,7 @@ public class EquipSlot : ItemSlot, IPointerClickHandler
         DisplayIcon();
     }
 
-    public new void SetItem(PickupableItem newItem)
+    public void SetItem(EquippableItem newItem)
     {
         base.SetItem(newItem);
     }
@@ -23,7 +33,7 @@ public class EquipSlot : ItemSlot, IPointerClickHandler
             if (!draggingIcon && _item)
             {
                 // equipped item selected
-                ItemSelector.Instance.SelectedEquipSlotIndex = (int)EquipSlotType;
+                ItemSelector.Instance.SelectedEquipSlotIndex = (int)EquipSlotName;
                 ItemSelector.Instance.StartDraggingIcon(Icon);
                 Icon.enabled = false;
                 Tooltip.Instance.Hide();
@@ -34,27 +44,46 @@ public class EquipSlot : ItemSlot, IPointerClickHandler
                 {
                     var itemStack = Inventory.Instance.Items[ItemSelector.Instance.SelectedInventorySlotIndex];
                     if (itemStack.Item is EquippableItem equippable &&
-                        equippable.EquipSlotType == EquipSlotType)
+                        equippable.EquipSlotType == Equipment.Instance.GetSlotType(EquipSlotName))
                     {
                         Inventory.Instance.RemoveAt(ItemSelector.Instance.SelectedInventorySlotIndex);
-                        Equipment.Instance.EquipFrom(equippable, ItemSelector.Instance.SelectedInventorySlotIndex);
+                        Equipment.Instance.EquipFrom(equippable, EquipSlotName, ItemSelector.Instance.SelectedInventorySlotIndex);
 
                         ItemSelector.Instance.StopDraggingIcon();
                         DisplayIcon();
                     }
                 }
-                else if (ItemSelector.Instance.SelectedEquipSlotIndex == (int) EquipSlotType)
+                else if (ItemSelector.Instance.SelectedEquipSlotIndex != -1)
                 {
-                    ItemSelector.Instance.StopDraggingIcon();
-                    DisplayIcon();
+                    EquipSlotNameType selectedEquipSlotName = (EquipSlotNameType)ItemSelector.Instance.SelectedEquipSlotIndex;
+                    if (Equipment.Instance.GetSlotType(selectedEquipSlotName) == Equipment.Instance.GetSlotType(EquipSlotName))
+                    {
+                        if (selectedEquipSlotName != EquipSlotName)
+                        {
+                            var selectedEquippable = Equipment.Instance.GetEquippedAt(selectedEquipSlotName);
+                            Equipment.Instance.Unequip(selectedEquipSlotName, false);
+
+                            if (_item)
+                            {
+                                var thisItem = _item;
+                                Equipment.Instance.Unequip(EquipSlotName, false);
+                                Equipment.Instance.Equip(thisItem as EquippableItem, selectedEquipSlotName);
+                            }
+
+                            Equipment.Instance.Equip(selectedEquippable, EquipSlotName);
+                        }
+
+                        ItemSelector.Instance.StopDraggingIcon();
+                        DisplayIcon();
+                        Tooltip.Instance.Show(_item);
+                    }
                 }
-                Tooltip.Instance.Show(_item);
             }
         }
         else if (pointerEventData.button == PointerEventData.InputButton.Right &&
-                 !draggingIcon && _item is EquippableItem equippable)
+                 !draggingIcon && _item)
         {
-            Equipment.Instance.Unequip(equippable.EquipSlotType);
+            Equipment.Instance.Unequip(EquipSlotName);
             Tooltip.Instance.Hide();
         }
     }

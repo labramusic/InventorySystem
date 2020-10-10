@@ -19,8 +19,3 @@ public class EquippableItem : PickupableItem
         EventManager.Instance.InvokeEvent(EventName.EquipmentUsed, new EquipmentUsedEventArgs(this, invSlotIndex));
     }
 }
-
-public enum EquipSlotType
-{
-    Head, MainHand, Torso, OffHand, Feet
-}

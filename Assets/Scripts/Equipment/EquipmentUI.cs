@@ -32,14 +32,13 @@ public class EquipmentUI : UIPanel
     {
         if (!(args is EquipmentChangedEventArgs eArgs)) return;
         // update only changed slot
-
         if (eArgs.NewItem == null)
         {
-            _equipSlots[(int) eArgs.OldItem.EquipSlotType].ClearSlot();
+            _equipSlots[(int) eArgs.EquipSlotName].ClearSlot();
         }
         else
         {
-            _equipSlots[(int) eArgs.NewItem.EquipSlotType].SetItem(eArgs.NewItem);
+            _equipSlots[(int)eArgs.EquipSlotName].SetItem(eArgs.NewItem);
         }
     }
 }
