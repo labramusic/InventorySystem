@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -78,6 +79,7 @@ public class InventorySlot : ItemSlot, IPointerClickHandler
         {
             _item.Use(InventoryItemIndex);
             Tooltip.Instance.Hide();
+            if (_item) Tooltip.Instance.Show(_item);
         }
         else if (pointerEventData.button == PointerEventData.InputButton.Middle &&
                  !draggingIcon && _item is ConsumableItem)

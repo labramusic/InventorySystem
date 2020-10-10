@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerAttributes : MonoBehaviour
@@ -29,8 +30,8 @@ public class PlayerAttributes : MonoBehaviour
 
     private void Start()
     {
-        int numAttributes = Enum.GetNames(typeof(AttributeNameType)).Length;
-        _attributes = new Attribute[numAttributes];
+        //int numAttributes = Enum.GetNames(typeof(AttributeNameType)).Length;
+        _attributes = new Attribute[_baseAttributes.Count];
         foreach (var attribute in _baseAttributes)
         {
             _attributes[(int) attribute.AttributeName] = attribute;
@@ -50,6 +51,11 @@ public class PlayerAttributes : MonoBehaviour
     {
         int index = (int) attributeName;
         return (_attributes?[index] != null) ? _attributes[index].GetValue() : 0;
+    }
+
+    public List<AttributeNameType> GetAttributesNames()
+    {
+        return _attributes.Select(a => a.AttributeName).ToList();
     }
 
     private void OnEquipmentChanged(EventArgs args)
