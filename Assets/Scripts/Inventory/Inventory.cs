@@ -71,7 +71,8 @@ public class Inventory : MonoBehaviour
             {
                 if (_items[i] != null) continue;
 
-                _items[i] = new ItemStack(item, 1);
+                _items[i] = (item is EquippableItem equippable) ?
+                    new ExpendableItem(equippable) : new ItemStack(item, 1);
                 added = true;
                 break;
             }
@@ -93,16 +94,13 @@ public class Inventory : MonoBehaviour
     public bool AddAt(ItemStack itemStack, int index)
     {
         if (index < 0 || index >= _items.Length) return false;
-        
-        if (_items[index] == null)
-        {
-            _items[index] = itemStack;
-            EventManager.Instance.InvokeEvent(EventName.InventoryUpdated, 
-                new InventoryUpdatedEventArgs());
-            return true;
-        }
 
-        return false;
+        //if (_items[index] != null) return false;
+        
+        _items[index] = itemStack;
+        EventManager.Instance.InvokeEvent(EventName.InventoryUpdated,
+            new InventoryUpdatedEventArgs());
+        return true;
     }
 
     public void RemoveAt(int index)
@@ -125,11 +123,13 @@ public class Inventory : MonoBehaviour
     {
         if (index < 0 || index >= _items.Length || _items[index] == null) return;
 
-        if (--_items[index].Count <= 0)
+        if (_items[index].Count <= 1)
         {
             RemoveAt(index);
             return;
         }
+
+        --_items[index].Count;
 
         EventManager.Instance.InvokeEvent(EventName.InventoryUpdated, 
             new InventoryUpdatedEventArgs());

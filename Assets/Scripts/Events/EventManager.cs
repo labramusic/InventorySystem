@@ -8,7 +8,8 @@ public enum EventName
 {
     ItemUsed, EquipmentUsed, ItemPickedUp, EquipmentPickedUp, 
     InventoryUpdated, EquipmentChanged, AttributesUpdated,
-    InventoryPanelToggled, EquipmentPanelToggled
+    InventoryPanelToggled, EquipmentPanelToggled,
+    WalkDistanceThresholdReached, EquipmentDestroyed
 }
 
 public class EventManager : MonoBehaviour

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class InventorySlot : ItemSlot, IPointerClickHandler
+public class InventorySlot : ItemSlot, IPointerEnterHandler, IPointerClickHandler
 {
     public Text StackCountText;
 
@@ -44,6 +44,14 @@ public class InventorySlot : ItemSlot, IPointerClickHandler
         StackCountText.enabled = false;
     }
 
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (_item != null && ItemSelector.Instance.DraggedIcon == null)
+        {
+            Tooltip.Instance.Show(Inventory.Instance.Items[InventoryItemIndex]);
+        }
+    }
+
     public void OnPointerClick(PointerEventData pointerEventData)
     {
         bool draggingIcon = (ItemSelector.Instance.DraggedIcon != null);
@@ -71,7 +79,7 @@ public class InventorySlot : ItemSlot, IPointerClickHandler
 
                 ItemSelector.Instance.StopDraggingIcon();
                 DisplayIcon();
-                Tooltip.Instance.Show(_item);
+                Tooltip.Instance.Show(Inventory.Instance.Items[InventoryItemIndex]);
             }
         }
         else if (pointerEventData.button == PointerEventData.InputButton.Right &&
@@ -79,7 +87,7 @@ public class InventorySlot : ItemSlot, IPointerClickHandler
         {
             _item.Use(InventoryItemIndex);
             Tooltip.Instance.Hide();
-            if (_item) Tooltip.Instance.Show(_item);
+            if (_item) Tooltip.Instance.Show(Inventory.Instance.Items[InventoryItemIndex]);
         }
         else if (pointerEventData.button == PointerEventData.InputButton.Middle &&
                  !draggingIcon && _item is ConsumableItem)
@@ -116,10 +124,10 @@ public class InventorySlot : ItemSlot, IPointerClickHandler
 
         if (thisItemStack != null)
         {
-            if (thisItemStack.Item is EquippableItem equippable && 
-                equippable.EquipSlotType == Equipment.Instance.GetSlotType(selectedEquipSlotName))
+            if (thisItemStack is ExpendableItem expendable && 
+                expendable.Item.EquipSlotType == Equipment.Instance.GetSlotType(selectedEquipSlotName))
             {
-                Equipment.Instance.Equip(equippable, selectedEquipSlotName);
+                Equipment.Instance.Equip(expendable, selectedEquipSlotName);
             }
             else
             {

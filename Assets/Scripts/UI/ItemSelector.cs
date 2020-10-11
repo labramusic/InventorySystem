@@ -64,11 +64,10 @@ public class ItemSelector : MonoBehaviour
             }
             else if (SelectedEquipSlotIndex != -1)
             {
-                var equippable = Equipment.Instance.GetEquippedAt((EquipSlotNameType) SelectedEquipSlotIndex);
-                var itemStack = new ItemStack(equippable, 1);
+                var expendableItem = Equipment.Instance.GetEquippedAt((EquipSlotNameType) SelectedEquipSlotIndex);
                 Equipment.Instance.Unequip((EquipSlotNameType)SelectedEquipSlotIndex, false);
 
-                ItemSpawner.Instance.SpawnItemOnGround(itemStack, mousePos2D);
+                ItemSpawner.Instance.SpawnItemOnGround(expendableItem, mousePos2D);
                 StopDraggingIcon();
             }
         }

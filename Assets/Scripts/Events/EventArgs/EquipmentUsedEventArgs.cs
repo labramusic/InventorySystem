@@ -2,12 +2,12 @@
 
 public class EquipmentUsedEventArgs : EventArgs
 {
-    public EquippableItem EquippableItem { get; }
+    public ExpendableItem ExpendableItem { get; }
     public int InventorySlotIndex { get; }
 
-    public EquipmentUsedEventArgs(EquippableItem equippableItem, int inventorySlotIndex)
+    public EquipmentUsedEventArgs(ExpendableItem expendableItem, int inventorySlotIndex)
     {
-        EquippableItem = equippableItem;
+        ExpendableItem = expendableItem;
         InventorySlotIndex = inventorySlotIndex;
     }
 }

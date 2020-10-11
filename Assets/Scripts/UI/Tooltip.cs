@@ -49,16 +49,18 @@ public class Tooltip : MonoBehaviour
         transform.position = Input.mousePosition;
     }
 
-    private void GenerateTooltip(PickupableItem item)
+    private void GenerateTooltip(ItemStack itemStack)
     {
         StringBuilder sb = new StringBuilder();
-        sb.Append(item.ItemName);
-        var type = item is ConsumableItem ? "Consumable" : "Equippable";
+        sb.Append(itemStack.Item.ItemName);
+        var type = itemStack.Item is ConsumableItem ? "Consumable" : "Equippable";
         sb.Append(" (").Append(type).Append(')');
 
-        if (item is EquippableItem equippable)
+        if (itemStack is ExpendableItem e)
         {
-            foreach (var m in equippable.Modifiers)
+            sb.AppendLine().Append("Durability: ")
+                .Append(e.RemainingDurability).Append("/").Append(e.Item.Durability);
+            foreach (var m in e.Item.Modifiers)
             {
                 sb.AppendLine();
                 sb.Append(m.AttributeName.ToString()).Append(" +").Append(m.Value);
@@ -67,14 +69,14 @@ public class Tooltip : MonoBehaviour
         _tooltipText.text = sb.ToString();
     }
 
-    public void Show(PickupableItem item)
+    public void Show(ItemStack itemStack)
     {
-        if (!item) return;
+        if (itemStack == null) return;
         var pivotX = (Input.mousePosition.x > (Screen.width / 2f)) ? (1 + _tooltipPivotX) : -_tooltipPivotX;
         var newPivot = new Vector2(pivotX, GetComponent<RectTransform>().pivot.y);
         GetComponent<RectTransform>().pivot = newPivot;
 
-        GenerateTooltip(item);
+        GenerateTooltip(itemStack);
         gameObject.SetActive(true);
     }
 

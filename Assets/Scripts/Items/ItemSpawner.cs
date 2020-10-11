@@ -44,7 +44,8 @@ public class ItemSpawner : MonoBehaviour
         {
             int i = Random.Range(0, _items.Length);
             if (!(_items[i] is PickupableItem pickupable)) return;
-            var itemstack = new ItemStack(pickupable, 1);
+            var itemstack = (pickupable is EquippableItem equippable) ? 
+                new ExpendableItem(equippable) : new ItemStack(pickupable, 1);
             SpawnItemOnGround(itemstack, Player.transform.position);
         }
     }

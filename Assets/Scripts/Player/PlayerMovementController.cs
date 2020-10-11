@@ -2,10 +2,13 @@
 
 public class PlayerMovementController : MonoBehaviour
 {
+    public Vector2 MoveDirection { get; private set; }
+
     private Rigidbody2D _rb;
 
     private float _moveSpeed;
-    public Vector2 MoveDirection { get; private set; }
+    private float _walkDistanceSqrPeriodic;
+    private const float DISTANCE_THRESHOLD = 2f;
 
     private void Start()
     {
@@ -21,6 +24,14 @@ public class PlayerMovementController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        _rb.MovePosition(_rb.position + MoveDirection * _moveSpeed * Time.fixedDeltaTime);
+        var walkDistanceVector = MoveDirection * _moveSpeed * Time.fixedDeltaTime;
+        _rb.MovePosition(_rb.position + walkDistanceVector);
+
+        _walkDistanceSqrPeriodic += walkDistanceVector.sqrMagnitude;
+        if (_walkDistanceSqrPeriodic >= DISTANCE_THRESHOLD)
+        {
+            _walkDistanceSqrPeriodic -= DISTANCE_THRESHOLD;
+            EventManager.Instance.InvokeEvent(EventName.WalkDistanceThresholdReached, new EmptyEventArgs());
+        }
     }
 }

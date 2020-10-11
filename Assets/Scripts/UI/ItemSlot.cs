@@ -2,7 +2,7 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class ItemSlot : MonoBehaviour, IPointerExitHandler
 {
     public Image Icon;
     protected PickupableItem _item;
@@ -28,14 +28,6 @@ public class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if (Icon.sprite)
         {
             Icon.enabled = true;
-        }
-    }
-
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        if (_item != null && ItemSelector.Instance.DraggedIcon == null)
-        {
-            Tooltip.Instance.Show(_item);
         }
     }
 

@@ -10,7 +10,7 @@ public enum EquipSlotNameType
     LeftRing, Head, RightRing, MainHand, Torso, OffHand, Feet
 }
 
-public class EquipSlot : ItemSlot, IPointerClickHandler
+public class EquipSlot : ItemSlot, IPointerEnterHandler, IPointerClickHandler
 {
     public EquipSlotNameType EquipSlotName;
 
@@ -23,6 +23,14 @@ public class EquipSlot : ItemSlot, IPointerClickHandler
     public void SetItem(EquippableItem newItem)
     {
         base.SetItem(newItem);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (_item != null && ItemSelector.Instance.DraggedIcon == null)
+        {
+            Tooltip.Instance.Show(Equipment.Instance.GetEquippedAt(EquipSlotName));
+        }
     }
 
     public void OnPointerClick(PointerEventData pointerEventData)
@@ -43,11 +51,11 @@ public class EquipSlot : ItemSlot, IPointerClickHandler
                 if (ItemSelector.Instance.SelectedInventorySlotIndex != -1)
                 {
                     var itemStack = Inventory.Instance.Items[ItemSelector.Instance.SelectedInventorySlotIndex];
-                    if (itemStack.Item is EquippableItem equippable &&
-                        equippable.EquipSlotType == Equipment.Instance.GetSlotType(EquipSlotName))
+                    if (itemStack is ExpendableItem expendable &&
+                        expendable.Item.EquipSlotType == Equipment.Instance.GetSlotType(EquipSlotName))
                     {
                         Inventory.Instance.RemoveAt(ItemSelector.Instance.SelectedInventorySlotIndex);
-                        Equipment.Instance.EquipFrom(equippable, EquipSlotName, ItemSelector.Instance.SelectedInventorySlotIndex);
+                        Equipment.Instance.EquipFrom(expendable, EquipSlotName, ItemSelector.Instance.SelectedInventorySlotIndex);
 
                         ItemSelector.Instance.StopDraggingIcon();
                         DisplayIcon();
@@ -58,16 +66,16 @@ public class EquipSlot : ItemSlot, IPointerClickHandler
                     EquipSlotNameType selectedEquipSlotName = (EquipSlotNameType)ItemSelector.Instance.SelectedEquipSlotIndex;
                     if (Equipment.Instance.GetSlotType(selectedEquipSlotName) == Equipment.Instance.GetSlotType(EquipSlotName))
                     {
+                        var thisItem = Equipment.Instance.GetEquippedAt(EquipSlotName);
                         if (selectedEquipSlotName != EquipSlotName)
                         {
                             var selectedEquippable = Equipment.Instance.GetEquippedAt(selectedEquipSlotName);
                             Equipment.Instance.Unequip(selectedEquipSlotName, false);
 
-                            if (_item)
+                            if (thisItem != null)
                             {
-                                var thisItem = _item;
                                 Equipment.Instance.Unequip(EquipSlotName, false);
-                                Equipment.Instance.Equip(thisItem as EquippableItem, selectedEquipSlotName);
+                                Equipment.Instance.Equip(thisItem, selectedEquipSlotName);
                             }
 
                             Equipment.Instance.Equip(selectedEquippable, EquipSlotName);
@@ -75,7 +83,7 @@ public class EquipSlot : ItemSlot, IPointerClickHandler
 
                         ItemSelector.Instance.StopDraggingIcon();
                         DisplayIcon();
-                        Tooltip.Instance.Show(_item);
+                        Tooltip.Instance.Show(thisItem);
                     }
                 }
             }

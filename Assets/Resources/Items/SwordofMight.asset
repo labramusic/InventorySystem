@@ -15,6 +15,7 @@ MonoBehaviour:
   ItemName: Sword of Might
   Icon: {fileID: 21300000, guid: 90e99a7fde056a4418b9fe16084adb5c, type: 3}
   EquipSlotType: 1
+  Durability: 3
   Modifiers:
   - AttributeName: 0
     Value: 3

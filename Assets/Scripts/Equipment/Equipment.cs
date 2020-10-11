@@ -23,7 +23,7 @@ public class Equipment : MonoBehaviour
 
     private Inventory _inventory;
 
-    private EquippableItem[] _equippedItems;
+    private ExpendableItem[] _equippedItems;
     private EquipSlotType[] _equipSlotTypes;
 
     private void Start()
@@ -31,7 +31,7 @@ public class Equipment : MonoBehaviour
         _inventory = Inventory.Instance;
 
         int numSlots = Enum.GetNames(typeof(EquipSlotNameType)).Length;
-        _equippedItems = new EquippableItem[numSlots];
+        _equippedItems = new ExpendableItem[numSlots];
 
         _equipSlotTypes = new EquipSlotType[numSlots];
         for (int i = 0; i < numSlots; ++i)
@@ -66,36 +66,37 @@ public class Equipment : MonoBehaviour
 
         EventManager.Instance.AddListener(EventName.EquipmentPickedUp, OnEquipmentPickedUp);
         EventManager.Instance.AddListener(EventName.EquipmentUsed, OnEquipmentUsed);
+        EventManager.Instance.AddListener(EventName.EquipmentDestroyed, OnEquipmentDestroyed);
     }
 
     private void OnDestroy()
     {
         EventManager.Instance.RemoveListener(EventName.EquipmentPickedUp, OnEquipmentPickedUp);
         EventManager.Instance.RemoveListener(EventName.EquipmentUsed, OnEquipmentUsed);
+        EventManager.Instance.RemoveListener(EventName.EquipmentDestroyed, OnEquipmentDestroyed);
     }
 
-    public void Equip(EquippableItem newItem, EquipSlotNameType equipSlotName)
+    public void Equip(ExpendableItem newItem, EquipSlotNameType equipSlotName)
     {
         EquipFrom(newItem, equipSlotName, -1);
     }
 
-    public void EquipFrom(EquippableItem newItem, EquipSlotNameType equipSlotName, int invSlotIndex)
+    public void EquipFrom(ExpendableItem newItem, EquipSlotNameType equipSlotName, int invSlotIndex)
     {
         if (newItem == null) return;
         int slotIndex = (int)equipSlotName;
-
-        EquippableItem oldItem;
+        ExpendableItem oldItem;
         if ((oldItem = _equippedItems[slotIndex]) != null)
         {
-            if (invSlotIndex == -1) invSlotIndex = _inventory.FirstFreeSlot();
-            if (!_inventory.AddAt(new ItemStack(oldItem, 1), invSlotIndex)) return;
+            UnequipTo(equipSlotName, invSlotIndex);
         }
 
         _equippedItems[slotIndex] = newItem;
-        Debug.Log($"Equipped {newItem.ItemName}.");
+        EventManager.Instance.AddListener(EventName.WalkDistanceThresholdReached, newItem.ReduceDurability);
+        Debug.Log($"Equipped {newItem.Item.ItemName}.");
 
         EventManager.Instance.InvokeEvent(EventName.EquipmentChanged,
-            new EquipmentChangedEventArgs(oldItem, newItem, equipSlotName));
+            new EquipmentChangedEventArgs(oldItem?.Item, newItem.Item, equipSlotName));
     }
 
     public void Unequip(EquipSlotNameType equipSlotName, bool addToInventory = true)
@@ -107,20 +108,21 @@ public class Equipment : MonoBehaviour
     {
         int equipSlotIndex = (int)equipSlotName;
 
-        EquippableItem oldItem;
+        ExpendableItem oldItem;
         if ((oldItem = _equippedItems[equipSlotIndex]) != null)
         {
             if (addToInventory)
             {
                 if (invSlotIndex == -1) invSlotIndex = _inventory.FirstFreeSlot();
-                if (!_inventory.AddAt(new ItemStack(oldItem, 1), invSlotIndex)) return;
+                if (!_inventory.AddAt(oldItem, invSlotIndex)) return;
             }
 
             _equippedItems[equipSlotIndex] = null;
-            Debug.Log($"Unequipped {oldItem.ItemName}.");
+            EventManager.Instance.RemoveListener(EventName.WalkDistanceThresholdReached, oldItem.ReduceDurability);
+            Debug.Log($"Unequipped {oldItem.Item.ItemName}.");
 
             EventManager.Instance.InvokeEvent(EventName.EquipmentChanged,
-                new EquipmentChangedEventArgs(oldItem, null, equipSlotName));
+                new EquipmentChangedEventArgs(oldItem.Item, null, equipSlotName));
         }
     }
 
@@ -129,7 +131,7 @@ public class Equipment : MonoBehaviour
         return _equipSlotTypes[(int) equipSlotName];
     }
 
-    public EquippableItem GetEquippedAt(EquipSlotNameType equipSlotName)
+    public ExpendableItem GetEquippedAt(EquipSlotNameType equipSlotName)
     {
         return _equippedItems[(int) equipSlotName];
     }
@@ -158,7 +160,7 @@ public class Equipment : MonoBehaviour
         var freeSlot = FirstFreeSlotOfType(eArgs.EquippableItem.EquipSlotType);
         if (freeSlot.HasValue)
         {
-            Equip(eArgs.EquippableItem, freeSlot.Value);
+            Equip(new ExpendableItem(eArgs.EquippableItem), freeSlot.Value);
         }
         else
         {
@@ -169,7 +171,19 @@ public class Equipment : MonoBehaviour
     private void OnEquipmentUsed(EventArgs args)
     {
         if (!(args is EquipmentUsedEventArgs eArgs)) return;
-        var freeSlot = FirstFreeSlotOfType(eArgs.EquippableItem.EquipSlotType, true);
-        if (freeSlot.HasValue) EquipFrom(eArgs.EquippableItem, freeSlot.Value, eArgs.InventorySlotIndex);
+        var freeSlot = FirstFreeSlotOfType(eArgs.ExpendableItem.Item.EquipSlotType, true);
+        if (freeSlot.HasValue) EquipFrom(eArgs.ExpendableItem, freeSlot.Value, eArgs.InventorySlotIndex);
+    }
+
+    private void OnEquipmentDestroyed(EventArgs args)
+    {
+        if (!(args is EquipmentDestroyedEventArgs eArgs)) return;
+        for (var i = 0; i < _equippedItems.Length; ++i)
+        {
+            if (_equippedItems[i] == eArgs.Expendable)
+            {
+                Unequip((EquipSlotNameType) i, false);
+            }
+        }
     }
 }
