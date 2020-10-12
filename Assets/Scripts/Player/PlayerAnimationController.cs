@@ -18,19 +18,19 @@ public class PlayerAnimationController : MonoBehaviour
     private void FixedUpdate()
     {
         var moveDirection = GetComponent<PlayerMovementController>().MoveDirection;
-        if (moveDirection.y > 0)
+        if (moveDirection.y > 0.2f)
         {
             _animator.SetInteger(_directionParamHash, (int)WalkingDirectionType.North);
         }
-        else if (moveDirection.y < 0)
+        else if (moveDirection.y < -0.2f)
         {
             _animator.SetInteger(_directionParamHash, (int)WalkingDirectionType.South);
         }
-        else if (moveDirection.x < 0)
+        else if (moveDirection.x < -0.2f)
         {
             _animator.SetInteger(_directionParamHash, (int)WalkingDirectionType.West);
         }
-        else if (moveDirection.x > 0)
+        else if (moveDirection.x > 0.2f)
         {
             _animator.SetInteger(_directionParamHash, (int)WalkingDirectionType.East);
         }

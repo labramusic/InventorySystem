@@ -1,4 +1,5 @@
-﻿using UnityEngine.EventSystems;
+﻿
+using UnityEngine.EventSystems;
 
 public enum EquipSlotType
 {
@@ -10,9 +11,12 @@ public enum EquipSlotNameType
     LeftRing, Head, RightRing, MainHand, Torso, OffHand, Feet
 }
 
-public class EquipSlot : ItemSlot, IPointerEnterHandler, IPointerClickHandler
+public class EquipSlot : ItemSlot
 {
     public EquipSlotNameType EquipSlotName;
+
+    private Inventory _inventory;
+    private Equipment _equipment;
 
     private void OnEnable()
     {
@@ -20,80 +24,69 @@ public class EquipSlot : ItemSlot, IPointerEnterHandler, IPointerClickHandler
         DisplayIcon();
     }
 
+    private void Start()
+    {
+        _inventory = Inventory.Instance;
+        _equipment = Equipment.Instance;
+    }
+
+    public override ItemStack GetItem()
+    {
+        return _equipment.GetEquippedAt(EquipSlotName);
+    }
+
     public void SetItem(EquippableItem newItem)
     {
         base.SetItem(newItem);
     }
-
-    public void OnPointerEnter(PointerEventData eventData)
+    public override int GetItemIndex()
     {
-        if (_item != null && ItemSelector.Instance.DraggedIcon == null)
-        {
-            Tooltip.Instance.Show(Equipment.Instance.GetEquippedAt(EquipSlotName));
-        }
+        return (int)EquipSlotName;
     }
 
-    public void OnPointerClick(PointerEventData pointerEventData)
+    public override void SetSelectedItemIndex()
     {
-        bool draggingIcon = (ItemSelector.Instance.DraggedIcon != null);
-        if (pointerEventData.button == PointerEventData.InputButton.Left)
+        ItemSelector.Instance.SelectedEquipSlotIndex = (int)EquipSlotName;
+    }
+
+    public override bool PlaceFromInventory()
+    {
+        var itemStack = _inventory.Items[ItemSelector.Instance.SelectedInventorySlotIndex];
+        if (itemStack is ExpendableItem expendable &&
+            expendable.Item.EquipSlotType == _equipment.GetSlotType(EquipSlotName))
         {
-            if (!draggingIcon && _item)
-            {
-                // equipped item selected
-                ItemSelector.Instance.SelectedEquipSlotIndex = (int)EquipSlotName;
-                ItemSelector.Instance.StartDraggingIcon(Icon);
-                Icon.enabled = false;
-                Tooltip.Instance.Hide();
-                StackSplitPanel.Instance.Cancel();
-            }
-            else if (draggingIcon)
-            {
-                if (ItemSelector.Instance.SelectedInventorySlotIndex != -1)
-                {
-                    var itemStack = Inventory.Instance.Items[ItemSelector.Instance.SelectedInventorySlotIndex];
-                    if (itemStack is ExpendableItem expendable &&
-                        expendable.Item.EquipSlotType == Equipment.Instance.GetSlotType(EquipSlotName))
-                    {
-                        Inventory.Instance.RemoveAt(ItemSelector.Instance.SelectedInventorySlotIndex);
-                        Equipment.Instance.EquipFrom(expendable, EquipSlotName, ItemSelector.Instance.SelectedInventorySlotIndex);
+            _inventory.RemoveAt(ItemSelector.Instance.SelectedInventorySlotIndex);
+            _equipment.EquipFrom(expendable, EquipSlotName, ItemSelector.Instance.SelectedInventorySlotIndex);
 
-                        ItemSelector.Instance.StopDraggingIcon();
-                        DisplayIcon();
-                    }
-                }
-                else if (ItemSelector.Instance.SelectedEquipSlotIndex != -1)
-                {
-                    EquipSlotNameType selectedEquipSlotName = (EquipSlotNameType)ItemSelector.Instance.SelectedEquipSlotIndex;
-                    if (Equipment.Instance.GetSlotType(selectedEquipSlotName) == Equipment.Instance.GetSlotType(EquipSlotName))
-                    {
-                        var thisItem = Equipment.Instance.GetEquippedAt(EquipSlotName);
-                        if (selectedEquipSlotName != EquipSlotName)
-                        {
-                            var selectedEquippable = Equipment.Instance.GetEquippedAt(selectedEquipSlotName);
-                            Equipment.Instance.Unequip(selectedEquipSlotName, false);
-
-                            if (thisItem != null)
-                            {
-                                Equipment.Instance.Unequip(EquipSlotName, false);
-                                Equipment.Instance.Equip(thisItem, selectedEquipSlotName);
-                            }
-
-                            Equipment.Instance.Equip(selectedEquippable, EquipSlotName);
-                        }
-
-                        ItemSelector.Instance.StopDraggingIcon();
-                        DisplayIcon();
-                        Tooltip.Instance.Show(thisItem);
-                    }
-                }
-            }
+            return true;
         }
-        else if (pointerEventData.button == PointerEventData.InputButton.Right &&
-                 !draggingIcon && _item)
+
+        return false;
+    }
+
+    public override bool PlaceFromEquipment()
+    {
+        EquipSlotNameType selectedEquipSlotName = (EquipSlotNameType)ItemSelector.Instance.SelectedEquipSlotIndex;
+        if (_equipment.GetSlotType(selectedEquipSlotName) == _equipment.GetSlotType(EquipSlotName))
         {
-            Equipment.Instance.Unequip(EquipSlotName);
-            Tooltip.Instance.Hide();
+            var thisItem = GetItem();
+            if (selectedEquipSlotName != EquipSlotName)
+            {
+                var selectedEquippable = _equipment.GetEquippedAt(selectedEquipSlotName);
+                _equipment.Unequip(selectedEquipSlotName, false);
+
+                if (thisItem != null)
+                {
+                    _equipment.Unequip(EquipSlotName, false);
+                    _equipment.Equip((ExpendableItem) thisItem, selectedEquipSlotName);
+                }
+
+                _equipment.Equip(selectedEquippable, EquipSlotName);
+            }
+
+            return true;
         }
+
+        return false;
     }
 }

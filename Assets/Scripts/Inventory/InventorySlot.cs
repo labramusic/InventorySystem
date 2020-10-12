@@ -1,20 +1,33 @@
 ﻿using System;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class InventorySlot : ItemSlot, IPointerEnterHandler, IPointerClickHandler
+public class InventorySlot : ItemSlot
 {
     public Text StackCountText;
 
     [NonSerialized]
     public int InventoryItemIndex;
 
+    private Inventory _inventory;
+    private Equipment _equipment;
+
     private void OnEnable()
     {
         base.DisplayIcon();
         DisplayIcon();
+    }
+
+    private void Start()
+    {
+        _inventory = Inventory.Instance;
+        _equipment = Equipment.Instance;
+    }
+
+    public override ItemStack GetItem()
+    {
+        return _inventory.Items[InventoryItemIndex];
     }
 
     public void SetItem(PickupableItem newItem, int stackCount)
@@ -44,112 +57,71 @@ public class InventorySlot : ItemSlot, IPointerEnterHandler, IPointerClickHandle
         StackCountText.enabled = false;
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    public override int GetItemIndex()
     {
-        if (_item != null && ItemSelector.Instance.DraggedIcon == null)
-        {
-            Tooltip.Instance.Show(Inventory.Instance.Items[InventoryItemIndex]);
-        }
+        return InventoryItemIndex;
     }
 
-    public void OnPointerClick(PointerEventData pointerEventData)
+    public override void SetSelectedItemIndex()
     {
-        bool draggingIcon = (ItemSelector.Instance.DraggedIcon != null);
-        if (pointerEventData.button == PointerEventData.InputButton.Left)
-        {
-            if (!draggingIcon && _item)
-            {
-                // item selected
-                ItemSelector.Instance.SelectedInventorySlotIndex = InventoryItemIndex;
-                ItemSelector.Instance.StartDraggingIcon(Icon);
-                Icon.enabled = false;
-                StackCountText.enabled = false;
-                Tooltip.Instance.Hide();
-                StackSplitPanel.Instance.Cancel();
-            }
-            else if (draggingIcon)
-            {
-                if (ItemSelector.Instance.SelectedInventorySlotIndex != -1)
-                {
-                    PlaceFromInventory();
-                }
-                else if (ItemSelector.Instance.SelectedEquipSlotIndex != -1)
-                {
-                    PlaceFromEquipment();
-                }
-
-                ItemSelector.Instance.StopDraggingIcon();
-                DisplayIcon();
-                Tooltip.Instance.Show(Inventory.Instance.Items[InventoryItemIndex]);
-            }
-        }
-        else if (pointerEventData.button == PointerEventData.InputButton.Right &&
-                 !draggingIcon)
-        {
-            if (_item is EquippableItem)
-            {
-                _item.Use(InventoryItemIndex);
-                Tooltip.Instance.Hide();
-                if (_item) Tooltip.Instance.Show(Inventory.Instance.Items[InventoryItemIndex]);
-            }
-            else if (_item is ConsumableItem && Inventory.Instance.Items[InventoryItemIndex].Count > 1)
-            {
-                StackSplitPanel.Instance.Show(InventoryItemIndex);
-            }
-        }
-        else if (pointerEventData.button == PointerEventData.InputButton.Middle &&
-                 !draggingIcon && _item is ConsumableItem)
-        {
-            _item.Use(InventoryItemIndex);
-            if (!_item) Tooltip.Instance.Hide();
-        }
+        ItemSelector.Instance.SelectedInventorySlotIndex = InventoryItemIndex;
     }
 
-    private void PlaceFromInventory()
+    public override bool PlaceFromInventory()
     {
-        if (ItemSelector.Instance.SelectedInventorySlotIndex == InventoryItemIndex) return;
+        if (ItemSelector.Instance.SelectedInventorySlotIndex == InventoryItemIndex) return true;
 
-        var thisItemStack = Inventory.Instance.Items[InventoryItemIndex];
-        Inventory.Instance.RemoveAt(InventoryItemIndex);
+        var thisItemStack = GetItem();
+        _inventory.RemoveAt(InventoryItemIndex);
 
-        var itemStack = Inventory.Instance.Items[ItemSelector.Instance.SelectedInventorySlotIndex];
-        Inventory.Instance.RemoveAt(ItemSelector.Instance.SelectedInventorySlotIndex);
-        Inventory.Instance.AddAt(itemStack, InventoryItemIndex);
+        var selectedItemStack = _inventory.Items[ItemSelector.Instance.SelectedInventorySlotIndex];
+        _inventory.RemoveAt(ItemSelector.Instance.SelectedInventorySlotIndex);
+        _inventory.AddAt(selectedItemStack, InventoryItemIndex);
 
         if (thisItemStack != null)
         {
-            Inventory.Instance.AddAt(thisItemStack, ItemSelector.Instance.SelectedInventorySlotIndex);
+            _inventory.AddAt(thisItemStack, ItemSelector.Instance.SelectedInventorySlotIndex);
         }
+
+        return true;
     }
 
-    private void PlaceFromEquipment()
+    public override bool PlaceFromEquipment()
     {
-        var thisItemStack = Inventory.Instance.Items[InventoryItemIndex];
-        Inventory.Instance.RemoveAt(InventoryItemIndex);
+        var thisItemStack = GetItem();
+        _inventory.RemoveAt(InventoryItemIndex);
 
         EquipSlotNameType selectedEquipSlotName = (EquipSlotNameType) ItemSelector.Instance.SelectedEquipSlotIndex;
-        Equipment.Instance.UnequipTo(selectedEquipSlotName, InventoryItemIndex);
+        _equipment.UnequipTo(selectedEquipSlotName, InventoryItemIndex);
 
         if (thisItemStack != null)
         {
             if (thisItemStack is ExpendableItem expendable && 
-                expendable.Item.EquipSlotType == Equipment.Instance.GetSlotType(selectedEquipSlotName))
+                expendable.Item.EquipSlotType == _equipment.GetSlotType(selectedEquipSlotName))
             {
-                Equipment.Instance.Equip(expendable, selectedEquipSlotName);
+                _equipment.Equip(expendable, selectedEquipSlotName);
             }
             else
             {
-                Inventory.Instance.AddAt(thisItemStack, Inventory.Instance.FirstFreeSlot());
+                _inventory.AddAt(thisItemStack, _inventory.FirstFreeSlot());
             }
         }
+
+        return true;
     }
 
-    protected override void DisplayIcon()
+    public override void DisplayIcon()
     {
         base.DisplayIcon();
         if (_item is ConsumableItem consumable && consumable.StackLimit != 1)
         {
             StackCountText.enabled = true;
         }
+    }
+
+    public override void HideIcon()
+    {
+        base.HideIcon();
+        StackCountText.enabled = false;
     }
 }

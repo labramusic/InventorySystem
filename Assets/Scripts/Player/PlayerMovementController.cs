@@ -6,6 +6,7 @@ public class PlayerMovementController : MonoBehaviour
     public Vector2 MoveDirection { get; private set; }
 
     private Rigidbody2D _rb;
+    private InputController _inputController;
 
     private float _moveSpeed;
     private float _walkDistanceSqrPeriodic;
@@ -14,13 +15,14 @@ public class PlayerMovementController : MonoBehaviour
     private void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
+        _inputController = InputController.Instance;
         _moveSpeed = 4f;
         MoveDirection = Vector2.zero;
     }
 
     private void Update()
     {
-        MoveDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
+        MoveDirection = new Vector2(_inputController.HorizontalAxis(), _inputController.VerticalAxis()).normalized;
     }
 
     private void FixedUpdate()

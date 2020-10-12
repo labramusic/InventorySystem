@@ -20,7 +20,7 @@ public class InteractableItem : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (ItemSelector.Instance.DraggedIcon) return;
+        if (EventSystem.current.IsPointerOverGameObject() || ItemSelector.Instance.DraggedIcon) return;
         Camera.main.GetComponent<CameraController>().FocusItem(transform);
     }
 }

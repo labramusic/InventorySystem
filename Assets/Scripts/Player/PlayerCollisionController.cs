@@ -10,6 +10,13 @@ public class PlayerCollisionController : MonoBehaviour
 
     public CollisionMethodType CurrentCollision;
 
+    private PlayerMovementController _movementController;
+
+    private void Start()
+    {
+        _movementController = GetComponent<PlayerMovementController>();
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.K))
@@ -22,6 +29,7 @@ public class PlayerCollisionController : MonoBehaviour
 
     private void CheckCollisionWithItem()
     {
+        //CurrentCollision = CollisionMethodType.OverlapCircle;
         if (CurrentCollision == CollisionMethodType.Spatial)
         {
             if (Input.GetMouseButtonDown(1))
@@ -50,7 +58,7 @@ public class PlayerCollisionController : MonoBehaviour
         }
         else if (CurrentCollision == CollisionMethodType.CircleCasting)
         {
-            var moveDirection = GetComponent<PlayerMovementController>().MoveDirection;
+            var moveDirection = _movementController.MoveDirection;
             RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, 1f, moveDirection, 3f);
             foreach (RaycastHit2D hit in hits)
             {

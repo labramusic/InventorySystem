@@ -2,10 +2,12 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ItemSlot : MonoBehaviour, IPointerExitHandler
+public abstract class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public Image Icon;
     protected PickupableItem _item;
+
+    public abstract ItemStack GetItem();
 
     protected void SetItem(PickupableItem newItem)
     {
@@ -23,11 +25,30 @@ public class ItemSlot : MonoBehaviour, IPointerExitHandler
         Icon.enabled = false;
     }
 
-    protected virtual void DisplayIcon()
+    public abstract int GetItemIndex();
+    public abstract void SetSelectedItemIndex();
+    public abstract bool PlaceFromInventory();
+    public abstract bool PlaceFromEquipment();
+
+    public virtual void DisplayIcon()
     {
         if (Icon.sprite)
         {
             Icon.enabled = true;
+        }
+    }
+
+    public virtual void HideIcon()
+    {
+        Icon.enabled = false;
+    }
+
+    // TODO if pc input?
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (_item != null && ItemSelector.Instance.DraggedIcon == null)
+        {
+            Tooltip.Instance.Show(GetItem());
         }
     }
 

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -31,11 +33,19 @@ public class ItemSelector : MonoBehaviour
     [NonSerialized]
     public int SelectedEquipSlotIndex = -1;
 
+    private InputController _inputController;
+    private EventSystem _eventSystem;
+    private PointerEventData _pointerEventData;
+
     private bool _inventoryActive;
     private bool _equipmentActive;
 
     private void Start()
     {
+        _inputController = InputController.Instance;
+        _eventSystem = EventSystem.current;
+        _pointerEventData = new PointerEventData(_eventSystem);
+
         EventManager.Instance.AddListener(EventName.InventoryPanelToggled, OnInventoryPanelToggled);
         EventManager.Instance.AddListener(EventName.EquipmentPanelToggled, OnEquipmentPanelToggled);
     }
@@ -48,27 +58,46 @@ public class ItemSelector : MonoBehaviour
 
     private void Update()
     {
-        if (EventSystem.current.IsPointerOverGameObject()) return;
-        if (Input.GetMouseButtonDown(0))
+        if (EventSystem.current.IsPointerOverGameObject())
         {
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
-
-            if (SelectedInventorySlotIndex != -1)
+            if (!DraggedIcon)
             {
-                var itemStack = Inventory.Instance.Items[SelectedInventorySlotIndex];
-                Inventory.Instance.RemoveAt(SelectedInventorySlotIndex);
-
-                ItemSpawner.Instance.SpawnItemOnGround(itemStack, mousePos2D);
-                StopDraggingIcon();
+                if (_inputController.SelectItemInput())
+                {
+                    SelectItem(ItemSlotAtInputPos());
+                }
+                if (_inputController.UseConsumableItemInput())
+                {
+                    UseConsumableItem(ItemSlotAtInputPos());
+                }
+                if (_inputController.UseEquippableItemInput())
+                {
+                    UseEquippableItem(ItemSlotAtInputPos());
+                }
+                if (_inputController.SplitItemStackInput())
+                {
+                    ShowSplitStackPanel(ItemSlotAtInputPos());
+                }
+                if (_inputController.ShowTooltipInput())
+                {
+                    var itemSlot = ItemSlotAtInputPos();
+                    if (itemSlot) Tooltip.Instance.Show(itemSlot.GetItem());
+                }
             }
-            else if (SelectedEquipSlotIndex != -1)
+            else if (_inputController.PlaceItemInput())
             {
-                var expendableItem = Equipment.Instance.GetEquippedAt((EquipSlotNameType) SelectedEquipSlotIndex);
-                Equipment.Instance.Unequip((EquipSlotNameType)SelectedEquipSlotIndex, false);
+                PlaceItemInSlot(ItemSlotAtInputPos());
+            }
+        }
+        else if (DraggedIcon)
+        {
+            if (_inputController.ReleaseItemInput())
+            {
+                // TODO get pos
+                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
 
-                ItemSpawner.Instance.SpawnItemOnGround(expendableItem, mousePos2D);
-                StopDraggingIcon();
+                PlaceItemOnGround(mousePos2D);
             }
         }
     }
@@ -81,13 +110,121 @@ public class ItemSelector : MonoBehaviour
         }
     }
 
-    public void StartDraggingIcon(Image Icon)
+    // TODO touch
+    private ItemSlot ItemSlotAtInputPos()
     {
-        DraggedIcon = Instantiate(Icon, transform);
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
+
+        //_pointerEventData = new PointerEventData(_eventSystem);
+        _pointerEventData.position = Input.mousePosition;
+        List<RaycastResult> results = new List<RaycastResult>();
+
+        //Raycast using the Graphics Raycaster and mouse click position
+        _eventSystem.RaycastAll(_pointerEventData, results);
+        //m_Raycaster.Raycast(m_PointerEventData, results);
+
+        if (results.Any(r => r.gameObject.GetComponent<ItemSlot>()))
+
+        {
+            return results.First(r => r.gameObject.GetComponent<ItemSlot>())
+                .gameObject.gameObject.GetComponent<ItemSlot>();
+        }
+
+        return null;
+    }
+
+    private void SelectItem(ItemSlot itemSlot)
+    {
+        if (!itemSlot || itemSlot.GetItem() == null) return;
+        itemSlot.SetSelectedItemIndex();
+        StartDraggingIcon(itemSlot.Icon);
+        itemSlot.HideIcon();
+        Tooltip.Instance.Hide();
+        StackSplitPanel.Instance.Cancel();
+    }
+
+    private void PlaceItemInSlot(ItemSlot itemSlot)
+    {
+        if (!itemSlot) return;
+        bool itemPlaced = false;
+        if (SelectedInventorySlotIndex != -1) itemPlaced = itemSlot.PlaceFromInventory();
+        else if (SelectedEquipSlotIndex != -1) itemPlaced = itemSlot.PlaceFromEquipment();
+
+        if (itemPlaced)
+        {
+            StopDraggingIcon();
+            itemSlot.DisplayIcon();
+            // TODO and input
+            Tooltip.Instance.Show(itemSlot.GetItem());
+        }
+    }
+
+    private void UseConsumableItem(ItemSlot itemSlot)
+    {
+        if (!itemSlot || itemSlot.GetItem() == null) return;
+        if (itemSlot.GetItem().Item is ConsumableItem consumable)
+        {
+            consumable.Use(itemSlot.GetItemIndex());
+            if (itemSlot.GetItem() == null) 
+                Tooltip.Instance.Hide();
+        }
+    }
+
+    private void UseEquippableItem(ItemSlot itemSlot)
+    {
+        if (!itemSlot || itemSlot.GetItem() == null) return;
+        if (itemSlot.GetItem().Item is EquippableItem equippable)
+        {
+            if (itemSlot is InventorySlot)
+                equippable.Use(itemSlot.GetItemIndex());
+            else if (itemSlot is EquipSlot)
+                Equipment.Instance.Unequip((EquipSlotNameType)itemSlot.GetItemIndex());
+
+            Tooltip.Instance.Hide();
+            // TODO and input
+            if (itemSlot.GetItem() != null)
+                Tooltip.Instance.Show(itemSlot.GetItem());
+        }
+    }
+
+    private void ShowSplitStackPanel(ItemSlot itemSlot)
+    {
+        if (!itemSlot) return;
+        var itemStack = itemSlot.GetItem();
+        if (itemStack?.Item is ConsumableItem && itemStack.Count > 1)
+        {
+            StackSplitPanel.Instance.Show(itemSlot.GetItemIndex());
+        }
+    }
+
+    private void PlaceItemOnGround(Vector2 position)
+    {
+        if (SelectedInventorySlotIndex != -1)
+        {
+            var itemStack = Inventory.Instance.Items[SelectedInventorySlotIndex];
+            Inventory.Instance.RemoveAt(SelectedInventorySlotIndex);
+
+            ItemSpawner.Instance.SpawnItemOnGround(itemStack, position);
+            StopDraggingIcon();
+        }
+        else if (SelectedEquipSlotIndex != -1)
+        {
+            var expendableItem = Equipment.Instance.GetEquippedAt((EquipSlotNameType)SelectedEquipSlotIndex);
+            Equipment.Instance.Unequip((EquipSlotNameType)SelectedEquipSlotIndex, false);
+
+            ItemSpawner.Instance.SpawnItemOnGround(expendableItem, position);
+            StopDraggingIcon();
+        }
+    }
+
+    private void StartDraggingIcon(Image icon)
+    {
+        DraggedIcon = Instantiate(icon, transform);
         DraggedIcon.GetComponent<Canvas>().sortingOrder += 1;
     }
 
-    public void StopDraggingIcon()
+    private void StopDraggingIcon()
     {
         if (DraggedIcon == null) return;
         Destroy(DraggedIcon.gameObject);
