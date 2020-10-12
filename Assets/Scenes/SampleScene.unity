@@ -1346,7 +1346,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7af81fba7d8ae5c47870a5baf06d8bf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: {fileID: 963231573}
+  PlayerTransform: {fileID: 963231578}
+  SmoothTime: 2
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class InteractableItem : MonoBehaviour
 {
@@ -15,5 +16,11 @@ public class InteractableItem : MonoBehaviour
         }
 
         Destroy(gameObject);
+    }
+
+    private void OnMouseDown()
+    {
+        if (ItemSelector.Instance.DraggedIcon) return;
+        Camera.main.GetComponent<CameraController>().FocusItem(transform);
     }
 }
