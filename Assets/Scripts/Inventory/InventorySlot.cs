@@ -83,11 +83,18 @@ public class InventorySlot : ItemSlot, IPointerEnterHandler, IPointerClickHandle
             }
         }
         else if (pointerEventData.button == PointerEventData.InputButton.Right &&
-                 !draggingIcon && _item is EquippableItem)
+                 !draggingIcon)
         {
-            _item.Use(InventoryItemIndex);
-            Tooltip.Instance.Hide();
-            if (_item) Tooltip.Instance.Show(Inventory.Instance.Items[InventoryItemIndex]);
+            if (_item is EquippableItem)
+            {
+                _item.Use(InventoryItemIndex);
+                Tooltip.Instance.Hide();
+                if (_item) Tooltip.Instance.Show(Inventory.Instance.Items[InventoryItemIndex]);
+            }
+            else if (_item is ConsumableItem && Inventory.Instance.Items[InventoryItemIndex].Count > 1)
+            {
+                StackSplitPanel.Instance.Show(InventoryItemIndex);
+            }
         }
         else if (pointerEventData.button == PointerEventData.InputButton.Middle &&
                  !draggingIcon && _item is ConsumableItem)

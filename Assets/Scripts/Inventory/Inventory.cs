@@ -95,8 +95,6 @@ public class Inventory : MonoBehaviour
     {
         if (index < 0 || index >= _items.Length) return false;
 
-        //if (_items[index] != null) return false;
-        
         _items[index] = itemStack;
         EventManager.Instance.InvokeEvent(EventName.InventoryUpdated,
             new InventoryUpdatedEventArgs());
@@ -132,6 +130,22 @@ public class Inventory : MonoBehaviour
         --_items[index].Count;
 
         EventManager.Instance.InvokeEvent(EventName.InventoryUpdated, 
+            new InventoryUpdatedEventArgs());
+    }
+
+    public void RemoveSeveralAt(int index, int numRemoved)
+    {
+        if (index < 0 || index >= _items.Length || _items[index] == null) return;
+
+        if (_items[index].Count <= 1 || numRemoved >= _items[index].Count)
+        {
+            RemoveAt(index);
+            return;
+        }
+
+        _items[index].Count -= numRemoved;
+
+        EventManager.Instance.InvokeEvent(EventName.InventoryUpdated,
             new InventoryUpdatedEventArgs());
     }
 
