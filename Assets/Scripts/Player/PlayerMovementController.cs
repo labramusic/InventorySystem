@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class PlayerMovementController : MonoBehaviour
 {
@@ -31,7 +32,7 @@ public class PlayerMovementController : MonoBehaviour
         if (_walkDistanceSqrPeriodic >= DISTANCE_THRESHOLD)
         {
             _walkDistanceSqrPeriodic -= DISTANCE_THRESHOLD;
-            EventManager.Instance.InvokeEvent(EventName.WalkDistanceThresholdReached, new EmptyEventArgs());
+            EventManager.Instance.InvokeEvent(EventName.WalkDistanceThresholdReached, EventArgs.Empty);
         }
     }
 }

@@ -37,7 +37,7 @@ public class AttributesUI : UIPanel
         for (int i = 0; i < numAttributes; ++i)
         {
             _attributeLabelTexts[i] = CreateText(_attributesNames[i] + "AttrTitle", _attributesNames[i] + ":", TextAnchor.MiddleLeft);
-            _attributeValTexts[i] = CreateText(_attributesNames[i] + "AttrValue", _playerAttributes.GetAttributeValue(_attributesNames[i]).ToString(), TextAnchor.MiddleCenter);
+            _attributeValTexts[i] = CreateText(_attributesNames[i] + "AttrValue", _playerAttributes.GetAttributeValueDisplay(_attributesNames[i]), TextAnchor.MiddleCenter);
         }
     }
 
@@ -48,8 +48,8 @@ public class AttributesUI : UIPanel
         textObject.transform.localScale = Vector3.one;
         var textComponent = textObject.AddComponent<Text>();
         textComponent.text = text;
-        textComponent.font = Font.CreateDynamicFontFromOSFont("Arial", 17);
-        textComponent.fontSize = 17;
+        textComponent.font = Font.CreateDynamicFontFromOSFont("Arial", 15);
+        textComponent.fontSize = 15;
         textComponent.color = new Color32(221, 221, 221, 255);
         textComponent.alignment = alignment;
 
@@ -63,7 +63,7 @@ public class AttributesUI : UIPanel
         int numAttributes = _attributesNames.Count;
         for (int i = 0; i < numAttributes; ++i)
         {
-            _attributeValTexts[i].text = _playerAttributes.GetAttributeValue(_attributesNames[i]).ToString();
+            _attributeValTexts[i].text = _playerAttributes.GetAttributeValueDisplay(_attributesNames[i]);
         }
     }
 }

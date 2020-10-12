@@ -17,7 +17,11 @@ MonoBehaviour:
   EquipSlotType: 2
   Durability: 3
   Modifiers:
-  - AttributeName: 0
+  - AttributeName: 2
+    AttrValueType: 0
+    AttrValueChangeType: 0
     Value: 2
-  - AttributeName: 1
+  - AttributeName: 3
+    AttrValueType: 0
+    AttrValueChangeType: 0
     Value: 3

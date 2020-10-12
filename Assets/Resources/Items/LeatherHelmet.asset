@@ -17,5 +17,7 @@ MonoBehaviour:
   EquipSlotType: 0
   Durability: 3
   Modifiers:
-  - AttributeName: 2
+  - AttributeName: 4
+    AttrValueType: 0
+    AttrValueChangeType: 0
     Value: 1

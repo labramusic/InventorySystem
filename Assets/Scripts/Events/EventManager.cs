@@ -6,7 +6,8 @@ using UnityEngine.Events;
 
 public enum EventName
 {
-    ItemUsed, EquipmentUsed, ItemPickedUp, EquipmentPickedUp, 
+    ItemUsed, EquipmentUsed, ConsumableUsed,
+    ItemPickedUp, EquipmentPickedUp,
     InventoryUpdated, EquipmentChanged, AttributesUpdated,
     InventoryPanelToggled, EquipmentPanelToggled,
     WalkDistanceThresholdReached, EquipmentDestroyed

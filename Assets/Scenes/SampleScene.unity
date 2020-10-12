@@ -2848,17 +2848,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e3bb3b15875a8a4f91a384b30d034eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _baseAttributes:
+  _spendableAttributes:
   - _attributeName: 0
-    _baseValue: 3
+    _baseValue: 100
   - _attributeName: 1
-    _baseValue: 5
+    _baseValue: 50
+  _baseAttributes:
   - _attributeName: 2
-    _baseValue: 3
+    _baseValue: 16
   - _attributeName: 3
-    _baseValue: 2
+    _baseValue: 20
   - _attributeName: 4
-    _baseValue: 2
+    _baseValue: 15
+  - _attributeName: 5
+    _baseValue: 12
+  - _attributeName: 6
+    _baseValue: 9
 --- !u!114 &963231582
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9523,7 +9528,7 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 108.6, y: 24}
+  m_CellSize: {x: 108.6, y: 15}
   m_Spacing: {x: 0, y: 5.73}
   m_Constraint: 1
   m_ConstraintCount: 2

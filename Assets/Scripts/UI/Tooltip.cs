@@ -63,7 +63,15 @@ public class Tooltip : MonoBehaviour
             foreach (var m in e.Item.Modifiers)
             {
                 sb.AppendLine();
+                if (m.AttrValueType == AttrValueType.Current)
+                {
+                    sb.Append("Current ");
+                }
                 sb.Append(m.AttributeName.ToString()).Append(" +").Append(m.Value);
+                if (m.AttrValueChangeType == AttrValueChangeType.Percentage)
+                {
+                    sb.Append("%");
+                }
             }
         }
         _tooltipText.text = sb.ToString();
