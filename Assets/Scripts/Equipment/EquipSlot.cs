@@ -45,6 +45,7 @@ public class EquipSlot : ItemSlot, IPointerEnterHandler, IPointerClickHandler
                 ItemSelector.Instance.StartDraggingIcon(Icon);
                 Icon.enabled = false;
                 Tooltip.Instance.Hide();
+                StackSplitPanel.Instance.Cancel();
             }
             else if (draggingIcon)
             {

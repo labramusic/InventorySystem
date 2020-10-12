@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -37,12 +38,15 @@ public class StackSplitPanel : MonoBehaviour
         gameObject.SetActive(false);
 
         OKButton.onClick.AddListener(SplitStack);
-        // listeners to panels closed etc to hide
+        EventManager.Instance.AddListener(EventName.ItemUsed, OnEvent);
+        EventManager.Instance.AddListener(EventName.InventoryPanelToggled, OnEvent);
     }
 
     private void OnDestroy()
     {
         OKButton.onClick.RemoveListener(SplitStack);
+        EventManager.Instance.RemoveListener(EventName.ItemUsed, OnEvent);
+        EventManager.Instance.RemoveListener(EventName.InventoryPanelToggled, OnEvent);
     }
 
     public void Show(int inventorySlotIndex)
@@ -104,5 +108,11 @@ public class StackSplitPanel : MonoBehaviour
     public void Cancel()
     {
         gameObject.SetActive(false);
+    }
+
+    public void OnEvent(EventArgs args)
+    {
+        if (!(args is PanelToggledEventArgs eArgs) || !eArgs.PanelActive)
+            Cancel();
     }
 }

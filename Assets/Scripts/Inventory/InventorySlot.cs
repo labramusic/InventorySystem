@@ -65,6 +65,7 @@ public class InventorySlot : ItemSlot, IPointerEnterHandler, IPointerClickHandle
                 Icon.enabled = false;
                 StackCountText.enabled = false;
                 Tooltip.Instance.Hide();
+                StackSplitPanel.Instance.Cancel();
             }
             else if (draggingIcon)
             {
