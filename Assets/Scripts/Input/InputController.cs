@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Net.Mime;
 using UnityEngine;
 using UnityEngine.Analytics;
-using UnityEngine.UI;
 
 public class InputController : MonoBehaviour, IInputSource
 {
@@ -49,6 +47,8 @@ public class InputController : MonoBehaviour, IInputSource
             return RuntimePlatform.OSXPlayer;
 #elif UNITY_STANDALONE_WIN
             return RuntimePlatform.WindowsPlayer;
+#elif PLATFORM_WEBGL
+            return RuntimePlatform.WebGLPlayer;
 #endif
         }
     }

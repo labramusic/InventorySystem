@@ -191,6 +191,7 @@ public class Equipment : MonoBehaviour
             if (_equippedItems[i] == eArgs.Expendable)
             {
                 Unequip((EquipSlotNameType) i, false);
+                return;
             }
         }
     }

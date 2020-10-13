@@ -1,6 +1,4 @@
 ﻿
-using UnityEngine.EventSystems;
-
 public enum EquipSlotType
 {
     Head, MainHand, Torso, OffHand, Feet, Ring

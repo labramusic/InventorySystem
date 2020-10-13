@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BuffTimer : MonoBehaviour
 {
@@ -47,14 +46,12 @@ public class BuffTimer : MonoBehaviour
                 {
                     _eventTickAcc -= EventTickSeconds;
                     TimerTick?.Invoke(TimedModifier);
-                    //Debug.Log("Timer tick.");
                 }
             }
 
             if (_elapsedSeconds >= _totalSeconds)
             {
                 _running = false;
-                Debug.Log("Timer finished.");
                 TimerFinished?.Invoke(TimedModifier, this);
             }
         }
@@ -64,7 +61,6 @@ public class BuffTimer : MonoBehaviour
     {
         if (_totalSeconds > 0)
         {
-            Debug.Log("Timer started.");
             _started = true;
             _running = true;
             _elapsedSeconds = 0;

@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public abstract class ItemSlot : MonoBehaviour
-#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_WEBGL
     , IPointerEnterHandler, IPointerExitHandler
 #endif
 {
@@ -46,7 +46,7 @@ public abstract class ItemSlot : MonoBehaviour
         Icon.enabled = false;
     }
 
-#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_WEBGL
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (_item != null && ItemSelector.Instance.DraggedIcon == null)
