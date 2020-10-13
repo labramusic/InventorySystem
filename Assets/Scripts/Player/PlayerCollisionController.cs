@@ -5,13 +5,19 @@ public class PlayerCollisionController : MonoBehaviour
 {
     public enum CollisionMethodType
     {
-        Spatial, Trigger, OverlapCircle, CircleCasting
+        Spatial, Trigger, OverlapCircle, CircleCasting,
+        TriggerInput, OverlapCircleInput, CircleCastingInput
     }
 
     public CollisionMethodType CurrentCollision;
 
     private PlayerMovementController _movementController;
     private InputController _inputController;
+
+    private const float COLLISION_CIRCLE_RADIUS = 2f;
+    private const float CAST_CIRCLE_DIST = 2f;
+
+    private bool _triggerColliding;
 
     private void Start()
     {
@@ -35,41 +41,64 @@ public class PlayerCollisionController : MonoBehaviour
 
     private void CheckCollisionWithItem()
     {
-        if (CurrentCollision == CollisionMethodType.Spatial)
+        if (_inputController.ItemInteractInput())
         {
-            if (_inputController.ItemInteractInput())
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
+
+            RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
+            if (hit.collider == null) return;
+            var item = hit.collider.GetComponent<InteractableItem>();
+            if (item == null) return;
+
+            if (CurrentCollision == CollisionMethodType.Spatial)
             {
-                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
-
-                RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
-                if (hit.collider == null) return;
-
-                var item = hit.collider.GetComponent<InteractableItem>();
-                if (item != null && Vector2.Distance(hit.collider.gameObject.transform.position, gameObject.transform.position) <= item.InteractRadius)
-                {
+                if (Vector2.Distance(hit.collider.gameObject.transform.position, gameObject.transform.position) <= item.InteractRadius)
                     item.Interact();
-                }
             }
+            else if (CurrentCollision == CollisionMethodType.TriggerInput)
+            {
+                if (_triggerColliding) item.Interact();
+            }
+            else if (CurrentCollision == CollisionMethodType.OverlapCircleInput)
+            {
+                CheckOverlapCircleCollision();
+
+            } else if (CurrentCollision == CollisionMethodType.CircleCastingInput)
+            {
+                CheckCircleCastCollision();
+            }
+
         }
         else if (CurrentCollision == CollisionMethodType.OverlapCircle)
         {
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 1f);
-            foreach (var coll in colliders)
-            {
-                var item = coll.GetComponent<InteractableItem>();
-                if (item != null) item.Interact();
-            }
+            CheckOverlapCircleCollision();
         }
         else if (CurrentCollision == CollisionMethodType.CircleCasting)
         {
-            var moveDirection = _movementController.MoveDirection;
-            RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, 1f, moveDirection, 3f);
-            foreach (RaycastHit2D hit in hits)
-            {
-                var item = hit.collider.GetComponent<InteractableItem>();
-                if (item != null) item.Interact();
-            }
+            CheckCircleCastCollision();
+        }
+    }
+
+    private void CheckOverlapCircleCollision()
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, COLLISION_CIRCLE_RADIUS);
+        foreach (var coll in colliders)
+        {
+            var item = coll.GetComponent<InteractableItem>();
+            if (item != null) item.Interact();
+        }
+    }
+
+
+    private void CheckCircleCastCollision()
+    {
+        var moveDirection = _movementController.MoveDirection;
+        RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, COLLISION_CIRCLE_RADIUS, moveDirection, CAST_CIRCLE_DIST);
+        foreach (RaycastHit2D hit in hits)
+        {
+            var item = hit.collider.GetComponent<InteractableItem>();
+            if (item != null) item.Interact();
         }
     }
 
@@ -86,8 +115,14 @@ public class PlayerCollisionController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D col)
     {
+        _triggerColliding = true;
         if (CurrentCollision != CollisionMethodType.Trigger) return;
         var item = col.gameObject.GetComponent<InteractableItem>();
         if (item) item.Interact();
+    }
+
+    private void OnTriggerExit2D(Collider2D col)
+    {
+        _triggerColliding = false;
     }
 }
