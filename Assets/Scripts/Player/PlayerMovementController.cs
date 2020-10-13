@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 public class PlayerMovementController : MonoBehaviour
 {
@@ -9,8 +11,11 @@ public class PlayerMovementController : MonoBehaviour
     private InputController _inputController;
 
     private float _moveSpeed;
-    private float _walkDistanceSqrPeriodic;
-    private const float DISTANCE_THRESHOLD = 2f;
+    private float _walkDistancePeriodic;
+    private const float DISTANCE_THRESHOLD = 10f;
+
+    private int _distThreshEventsFired;
+    private const int MAX_EVENTS_FIRED = 5;
 
     private void Start()
     {
@@ -31,14 +36,20 @@ public class PlayerMovementController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        var walkDistanceVector = MoveDirection * _moveSpeed * Time.fixedDeltaTime;
-        _rb.MovePosition(_rb.position + walkDistanceVector);
+        var moveDistance = MoveDirection * _moveSpeed * Time.fixedDeltaTime;
+        _rb.MovePosition(_rb.position + moveDistance);
 
-        _walkDistanceSqrPeriodic += walkDistanceVector.sqrMagnitude;
-        if (_walkDistanceSqrPeriodic >= DISTANCE_THRESHOLD)
+        _walkDistancePeriodic += moveDistance.magnitude;
+        if (_walkDistancePeriodic >= DISTANCE_THRESHOLD)
         {
-            _walkDistanceSqrPeriodic -= DISTANCE_THRESHOLD;
+            _walkDistancePeriodic -= DISTANCE_THRESHOLD;
             EventManager.Instance.InvokeEvent(EventName.WalkDistanceThresholdReached, EventArgs.Empty);
+
+            if (_distThreshEventsFired < MAX_EVENTS_FIRED)
+            {
+                ++_distThreshEventsFired;
+                Analytics.CustomEvent("playerMoved10Units");
+            }
         }
     }
 }

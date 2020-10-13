@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 public class Inventory : MonoBehaviour
 {
@@ -181,11 +183,24 @@ public class Inventory : MonoBehaviour
         if (!(args is ItemPickedUpEventArgs eArgs)) return;
         Add(eArgs.PickupableItem);
         Debug.Log($"Picked up {eArgs.PickupableItem.ItemName}.");
+
+        Analytics.CustomEvent("itemPickedUp", new Dictionary<string, object>()
+        {
+            {"itemName", eArgs.PickupableItem.ItemName},
+            {"itemType", eArgs.PickupableItem.GetType().Name}
+        });
     }
 
     private void OnItemUsed(EventArgs args)
     {
         if (!(args is ItemUsedEventArgs eArgs)) return;
+        var item = Items[eArgs.InventorySlotIndex].Item;
         RemoveOneAt(eArgs.InventorySlotIndex);
+
+        Analytics.CustomEvent("itemUsed", new Dictionary<string, object>()
+        {
+            {"itemName", item.ItemName},
+            {"itemType", item.GetType().Name}
+        });
     }
 }

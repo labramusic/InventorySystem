@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 public class Equipment : MonoBehaviour
 {
@@ -94,6 +96,12 @@ public class Equipment : MonoBehaviour
         _equippedItems[slotIndex] = newItem;
         EventManager.Instance.AddListener(EventName.WalkDistanceThresholdReached, newItem.ReduceDurability);
         Debug.Log($"Equipped {newItem.Item.ItemName}.");
+
+        Analytics.CustomEvent("itemEquipped", new Dictionary<string, object>()
+        {
+            {"itemName", newItem.Item.ItemName},
+            {"itemSlot", equipSlotName.ToString()}
+        });
 
         EventManager.Instance.InvokeEvent(EventName.EquipmentChanged,
             new EquipmentChangedEventArgs(oldItem?.Item, newItem.Item, equipSlotName));

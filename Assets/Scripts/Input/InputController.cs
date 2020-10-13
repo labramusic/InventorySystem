@@ -1,5 +1,7 @@
-﻿using System.Net.Mime;
+﻿using System.Collections.Generic;
+using System.Net.Mime;
 using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.UI;
 
 public class InputController : MonoBehaviour, IInputSource
@@ -17,6 +19,13 @@ public class InputController : MonoBehaviour, IInputSource
         else
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
+
+            Analytics.CustomEvent("startup", new Dictionary<string, object>()
+            {
+                {"platform", _platform.ToString()},
+                {"localTime", System.DateTime.Now}
+            });
         }
     }
 

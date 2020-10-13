@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Analytics;
 
 public class UIPanel : MonoBehaviour
 {
@@ -21,5 +23,13 @@ public class UIPanel : MonoBehaviour
     public virtual void TogglePanel()
     {
         Panel.SetActive(!Panel.activeSelf);
+
+        if (Panel.activeSelf)
+        {
+            Analytics.CustomEvent("windowOpened", new Dictionary<string, object>()
+            {
+                {"windowType", ToggleButton}
+            });
+        }
     }
 }

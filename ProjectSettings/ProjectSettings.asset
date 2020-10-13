@@ -635,10 +635,10 @@ PlayerSettings:
     m_VersionCode: 1
     m_VersionName: 
   apiCompatibilityLevel: 6
-  cloudProjectId: 
+  cloudProjectId: eda79338-1e15-4d5e-91b8-6e20651d4530
   framebufferDepthMemorylessMode: 0
-  projectName: 
-  organizationId: 
+  projectName: InventorySystem
+  organizationId: labramusiq
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0
