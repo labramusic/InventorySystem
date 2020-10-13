@@ -24,6 +24,8 @@ public class InputController : MonoBehaviour, IInputSource
 
     public Joystick Joystick;
 
+    public bool InputEnabled;
+
     private IInputSource _inputSource;
 
     private RuntimePlatform _platform
@@ -46,35 +48,38 @@ public class InputController : MonoBehaviour, IInputSource
     {
         if (Application.isMobilePlatform || _platform == RuntimePlatform.Android || _platform == RuntimePlatform.IPhonePlayer)
         {
-            Joystick.enabled = true;
             _inputSource = new InputSourceMobile(Joystick);
         }
         else
         {
-            // TODO jedan ne radi
-            Joystick.enabled = false;
+            Destroy(Joystick.gameObject);
             _inputSource = new InputSourcePC();
         }
+
+        InputEnabled = true;
     }
 
     public float HorizontalAxis()
     {
+        if (!InputEnabled) return 0f;
         return _inputSource.HorizontalAxis();
     }
 
     public float VerticalAxis()
     {
+        if (!InputEnabled) return 0f;
         return _inputSource.VerticalAxis();
     }
 
     public float ZoomValue()
     {
+        if (!InputEnabled) return 0f;
         return _inputSource.ZoomValue();
     }
 
     public bool ZoomInput()
     {
-        return _inputSource.ZoomInput();
+        return InputEnabled && _inputSource.ZoomInput();
     }
 
     public Vector3 PointerPosition()
@@ -84,31 +89,36 @@ public class InputController : MonoBehaviour, IInputSource
 
     public bool SelectItemInput()
     {
-        return _inputSource.SelectItemInput();
+        return InputEnabled && _inputSource.SelectItemInput();
     }
 
     public bool PlaceItemInput()
     {
-        return _inputSource.PlaceItemInput();
+        return InputEnabled && _inputSource.PlaceItemInput();
     }
 
     public bool UseEquippableItemInput()
     {
-        return _inputSource.UseEquippableItemInput();
+        return InputEnabled && _inputSource.UseEquippableItemInput();
     }
 
     public bool UseConsumableItemInput()
     {
-        return _inputSource.UseConsumableItemInput();
+        return InputEnabled && _inputSource.UseConsumableItemInput();
     }
 
     public bool SplitItemStackInput()
     {
-        return _inputSource.SplitItemStackInput();
+        return InputEnabled && _inputSource.SplitItemStackInput();
     }
 
     public bool ShowTooltipInput()
     {
         return _inputSource.ShowTooltipInput();
+    }
+
+    public bool ItemInteractInput()
+    {
+        return InputEnabled && _inputSource.ItemInteractInput();
     }
 }

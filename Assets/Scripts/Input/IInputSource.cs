@@ -13,5 +13,5 @@ public interface IInputSource
     bool UseConsumableItemInput();
     bool SplitItemStackInput();
     bool ShowTooltipInput();
-    // zoom camera
+    bool ItemInteractInput();
 }

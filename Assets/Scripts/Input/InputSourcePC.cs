@@ -58,4 +58,9 @@ public class InputSourcePC : IInputSource
     {
         return false;
     }
+
+    public bool ItemInteractInput()
+    {
+        return Input.GetMouseButtonDown(1);
+    }
 }

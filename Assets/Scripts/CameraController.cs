@@ -50,14 +50,15 @@ public class CameraController : MonoBehaviour
 
     public void FocusItem(Transform itemTransform)
     {
+        _inputController.InputEnabled = false;
         _focus = itemTransform;
         StartCoroutine(WaitAndReturnFocus());
     }
 
     private IEnumerator WaitAndReturnFocus()
     {
-        // TODO disable any player input
         yield return new WaitForSecondsRealtime(ITEM_FOCUS_TIME);
         _focus = PlayerTransform;
+        _inputController.InputEnabled = true;
     }
 }

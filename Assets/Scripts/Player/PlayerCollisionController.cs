@@ -11,10 +11,13 @@ public class PlayerCollisionController : MonoBehaviour
     public CollisionMethodType CurrentCollision;
 
     private PlayerMovementController _movementController;
+    private InputController _inputController;
 
     private void Start()
     {
         _movementController = GetComponent<PlayerMovementController>();
+        _inputController = InputController.Instance;
+
 #if UNITY_ANDROID || UNITY_IOS
         CurrentCollision = CollisionMethodType.OverlapCircle;
 #endif
@@ -34,7 +37,7 @@ public class PlayerCollisionController : MonoBehaviour
     {
         if (CurrentCollision == CollisionMethodType.Spatial)
         {
-            if (Input.GetMouseButtonDown(1))
+            if (_inputController.ItemInteractInput())
             {
                 Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);

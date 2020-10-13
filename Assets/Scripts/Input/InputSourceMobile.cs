@@ -18,7 +18,6 @@ public class InputSourceMobile : IInputSource
     public InputSourceMobile(Joystick joystick)
     {
         _joystick = joystick;
-        //joystick.enabled = true;
     }
 
     public float HorizontalAxis()
@@ -131,6 +130,11 @@ public class InputSourceMobile : IInputSource
             tapCount = 0;
         }
 
+        return false;
+    }
+
+    public bool ItemInteractInput()
+    {
         return false;
     }
 }
