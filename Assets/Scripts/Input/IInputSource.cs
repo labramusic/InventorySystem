@@ -1,12 +1,14 @@
-﻿
+﻿using UnityEngine;
+
 public interface IInputSource
 {
     float HorizontalAxis();
     float VerticalAxis();
-
+    float ZoomValue();
+    bool ZoomInput();
+    Vector3 PointerPosition();
     bool SelectItemInput();
     bool PlaceItemInput();
-    bool ReleaseItemInput();
     bool UseEquippableItemInput();
     bool UseConsumableItemInput();
     bool SplitItemStackInput();

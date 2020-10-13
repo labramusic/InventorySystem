@@ -14,17 +14,27 @@ public class InputSourcePC : IInputSource
         return Input.GetAxisRaw("Vertical");
     }
 
+    public float ZoomValue()
+    {
+        return 0f;
+    }
+
+    public bool ZoomInput()
+    {
+        return false;
+    }
+
+    public Vector3 PointerPosition()
+    {
+        return Input.mousePosition;
+    }
+
     public bool SelectItemInput()
     {
         return Input.GetMouseButtonDown(0);
     }
 
     public bool PlaceItemInput()
-    {
-        return Input.GetMouseButtonDown(0);
-    }
-
-    public bool ReleaseItemInput()
     {
         return Input.GetMouseButtonDown(0);
     }

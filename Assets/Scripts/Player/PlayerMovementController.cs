@@ -22,7 +22,11 @@ public class PlayerMovementController : MonoBehaviour
 
     private void Update()
     {
-        MoveDirection = new Vector2(_inputController.HorizontalAxis(), _inputController.VerticalAxis()).normalized;
+        var horizontalMove = _inputController.HorizontalAxis();
+        if (horizontalMove > -0.3f && horizontalMove < 0.3f) horizontalMove = 0f;
+        var verticalMove = _inputController.VerticalAxis();
+        if (verticalMove > -0.3f && verticalMove < 0.3f) verticalMove = 0f;
+        MoveDirection = new Vector2(horizontalMove, verticalMove).normalized;
     }
 
     private void FixedUpdate()

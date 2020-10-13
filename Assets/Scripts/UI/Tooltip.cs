@@ -24,6 +24,8 @@ public class Tooltip : MonoBehaviour
 
     #endregion
 
+    private InputController _inputController;
+
     private Text _tooltipText;
     private float _tooltipPivotX;
 
@@ -31,6 +33,7 @@ public class Tooltip : MonoBehaviour
     {
         gameObject.SetActive(false);
 
+        _inputController = InputController.Instance;
         _tooltipText = GetComponentInChildren<Text>();
         _tooltipPivotX = GetComponent<RectTransform>().pivot.x;
 
@@ -46,7 +49,7 @@ public class Tooltip : MonoBehaviour
 
     private void LateUpdate()
     {
-        transform.position = Input.mousePosition;
+        transform.position = _inputController.PointerPosition();
     }
 
     private void GenerateTooltip(ItemStack itemStack)
@@ -80,7 +83,7 @@ public class Tooltip : MonoBehaviour
     public void Show(ItemStack itemStack)
     {
         if (itemStack == null) return;
-        var pivotX = (Input.mousePosition.x > (Screen.width / 2f)) ? (1 + _tooltipPivotX) : -_tooltipPivotX;
+        var pivotX = (_inputController.PointerPosition().x > (Screen.width / 2f)) ? (1 + _tooltipPivotX) : -_tooltipPivotX;
         var newPivot = new Vector2(pivotX, GetComponent<RectTransform>().pivot.y);
         GetComponent<RectTransform>().pivot = newPivot;
 

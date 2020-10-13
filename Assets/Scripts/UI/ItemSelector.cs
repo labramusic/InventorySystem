@@ -37,6 +37,7 @@ public class ItemSelector : MonoBehaviour
     private EventSystem _eventSystem;
     private PointerEventData _pointerEventData;
 
+    private ItemSlot _selectedItemSlot;
     private bool _inventoryActive;
     private bool _equipmentActive;
 
@@ -58,46 +59,52 @@ public class ItemSelector : MonoBehaviour
 
     private void Update()
     {
-        if (EventSystem.current.IsPointerOverGameObject())
+        if (!DraggedIcon)
         {
-            if (!DraggedIcon)
+            if (_inputController.ShowTooltipInput())
             {
-                if (_inputController.SelectItemInput())
-                {
-                    SelectItem(ItemSlotAtInputPos());
-                }
-                if (_inputController.UseConsumableItemInput())
-                {
-                    UseConsumableItem(ItemSlotAtInputPos());
-                }
-                if (_inputController.UseEquippableItemInput())
-                {
-                    UseEquippableItem(ItemSlotAtInputPos());
-                }
-                if (_inputController.SplitItemStackInput())
-                {
-                    ShowSplitStackPanel(ItemSlotAtInputPos());
-                }
-                if (_inputController.ShowTooltipInput())
-                {
-                    var itemSlot = ItemSlotAtInputPos();
-                    if (itemSlot) Tooltip.Instance.Show(itemSlot.GetItem());
-                }
+                var itemSlot = ItemSlotAtInputPos();
+                if (itemSlot && itemSlot.GetItem() != null)
+                    Tooltip.Instance.Show(itemSlot.GetItem());
+                else Tooltip.Instance.Hide();
             }
-            else if (_inputController.PlaceItemInput())
+
+            if (_inputController.SelectItemInput())
             {
-                PlaceItemInSlot(ItemSlotAtInputPos());
+                SelectItem(ItemSlotAtInputPos());
+            }
+            if (_inputController.UseConsumableItemInput())
+            {
+                UseConsumableItem(ItemSlotAtInputPos());
+            }
+            if (_inputController.UseEquippableItemInput())
+            {
+                UseEquippableItem(ItemSlotAtInputPos());
+            }
+            if (_inputController.SplitItemStackInput())
+            {
+                ShowSplitStackPanel(ItemSlotAtInputPos());
             }
         }
-        else if (DraggedIcon)
+        else if (_inputController.PlaceItemInput())
         {
-            if (_inputController.ReleaseItemInput())
+            var itemSlot = ItemSlotAtInputPos();
+            if (itemSlot != null)
             {
-                // TODO get pos
-                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                PlaceItemInSlot(itemSlot);
+            }
+            else if (!_eventSystem.IsPointerOverGameObject())
+            {
+                Vector3 mousePos = Camera.main.ScreenToWorldPoint(_inputController.PointerPosition());
                 Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
 
                 PlaceItemOnGround(mousePos2D);
+            }
+            else
+            {
+                StopDraggingIcon();
+                _selectedItemSlot.DisplayIcon();
+                _selectedItemSlot = null;
             }
         }
     }
@@ -106,23 +113,18 @@ public class ItemSelector : MonoBehaviour
     {
         if (DraggedIcon)
         {
-            DraggedIcon.transform.position = Input.mousePosition;
+            DraggedIcon.transform.position = _inputController.PointerPosition();
         }
     }
 
-    // TODO touch
     private ItemSlot ItemSlotAtInputPos()
     {
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(_inputController.PointerPosition());
         Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
 
-        //_pointerEventData = new PointerEventData(_eventSystem);
-        _pointerEventData.position = Input.mousePosition;
+        _pointerEventData.position = _inputController.PointerPosition();
         List<RaycastResult> results = new List<RaycastResult>();
-
-        //Raycast using the Graphics Raycaster and mouse click position
         _eventSystem.RaycastAll(_pointerEventData, results);
-        //m_Raycaster.Raycast(m_PointerEventData, results);
 
         if (results.Any(r => r.gameObject.GetComponent<ItemSlot>()))
 
@@ -137,6 +139,7 @@ public class ItemSelector : MonoBehaviour
     private void SelectItem(ItemSlot itemSlot)
     {
         if (!itemSlot || itemSlot.GetItem() == null) return;
+        _selectedItemSlot = itemSlot;
         itemSlot.SetSelectedItemIndex();
         StartDraggingIcon(itemSlot.Icon);
         itemSlot.HideIcon();
@@ -155,8 +158,8 @@ public class ItemSelector : MonoBehaviour
         {
             StopDraggingIcon();
             itemSlot.DisplayIcon();
-            // TODO and input
-            Tooltip.Instance.Show(itemSlot.GetItem());
+            _selectedItemSlot = null;
+            //Tooltip.Instance.Show(itemSlot.GetItem());
         }
     }
 
@@ -182,9 +185,8 @@ public class ItemSelector : MonoBehaviour
                 Equipment.Instance.Unequip((EquipSlotNameType)itemSlot.GetItemIndex());
 
             Tooltip.Instance.Hide();
-            // TODO and input
-            if (itemSlot.GetItem() != null)
-                Tooltip.Instance.Show(itemSlot.GetItem());
+            //if (itemSlot.GetItem() != null)
+                //Tooltip.Instance.Show(itemSlot.GetItem());
         }
     }
 
@@ -207,6 +209,7 @@ public class ItemSelector : MonoBehaviour
 
             ItemSpawner.Instance.SpawnItemOnGround(itemStack, position);
             StopDraggingIcon();
+            _selectedItemSlot = null;
         }
         else if (SelectedEquipSlotIndex != -1)
         {
@@ -215,6 +218,7 @@ public class ItemSelector : MonoBehaviour
 
             ItemSpawner.Instance.SpawnItemOnGround(expendableItem, position);
             StopDraggingIcon();
+            _selectedItemSlot = null;
         }
     }
 
@@ -242,6 +246,7 @@ public class ItemSelector : MonoBehaviour
         if (!_inventoryActive && !_equipmentActive)
         {
             StopDraggingIcon();
+            _selectedItemSlot = null;
         }
     }
 
@@ -254,6 +259,7 @@ public class ItemSelector : MonoBehaviour
         if (!_inventoryActive && !_equipmentActive)
         {
             StopDraggingIcon();
+            _selectedItemSlot = null;
         }
     }
 }

@@ -2,7 +2,10 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public abstract class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public abstract class ItemSlot : MonoBehaviour
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
+    , IPointerEnterHandler, IPointerExitHandler
+#endif
 {
     public Image Icon;
     protected PickupableItem _item;
@@ -43,7 +46,7 @@ public abstract class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerEx
         Icon.enabled = false;
     }
 
-    // TODO if pc input?
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (_item != null && ItemSelector.Instance.DraggedIcon == null)
@@ -56,4 +59,5 @@ public abstract class ItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerEx
     {
         Tooltip.Instance.Hide();
     }
+#endif
 }

@@ -47,10 +47,12 @@ public class InputController : MonoBehaviour, IInputSource
         if (Application.isMobilePlatform || _platform == RuntimePlatform.Android || _platform == RuntimePlatform.IPhonePlayer)
         {
             Joystick.enabled = true;
-            throw new System.NotImplementedException();
+            _inputSource = new InputSourceMobile(Joystick);
         }
         else
         {
+            // TODO jedan ne radi
+            Joystick.enabled = false;
             _inputSource = new InputSourcePC();
         }
     }
@@ -65,6 +67,21 @@ public class InputController : MonoBehaviour, IInputSource
         return _inputSource.VerticalAxis();
     }
 
+    public float ZoomValue()
+    {
+        return _inputSource.ZoomValue();
+    }
+
+    public bool ZoomInput()
+    {
+        return _inputSource.ZoomInput();
+    }
+
+    public Vector3 PointerPosition()
+    {
+        return _inputSource.PointerPosition();
+    }
+
     public bool SelectItemInput()
     {
         return _inputSource.SelectItemInput();
@@ -73,11 +90,6 @@ public class InputController : MonoBehaviour, IInputSource
     public bool PlaceItemInput()
     {
         return _inputSource.PlaceItemInput();
-    }
-
-    public bool ReleaseItemInput()
-    {
-        return _inputSource.ReleaseItemInput();
     }
 
     public bool UseEquippableItemInput()

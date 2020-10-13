@@ -15,6 +15,9 @@ public class PlayerCollisionController : MonoBehaviour
     private void Start()
     {
         _movementController = GetComponent<PlayerMovementController>();
+#if UNITY_ANDROID || UNITY_IOS
+        CurrentCollision = CollisionMethodType.OverlapCircle;
+#endif
     }
 
     private void Update()
@@ -29,7 +32,6 @@ public class PlayerCollisionController : MonoBehaviour
 
     private void CheckCollisionWithItem()
     {
-        //CurrentCollision = CollisionMethodType.OverlapCircle;
         if (CurrentCollision == CollisionMethodType.Spatial)
         {
             if (Input.GetMouseButtonDown(1))
